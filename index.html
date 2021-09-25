@@ -176,11 +176,27 @@
                     },
                     {...basic_trial,
                          stimulus: function() {
+                            console.log('using default difficulty to establish baseline');
                             return getStimulus(
                                 jsPsych.data.get().last(1).values()[0].trial_num,
                                 stimulus_difficulty.default
                             );
                          },
+                        on_finish: function(data) {
+                            // code for correctness
+                            var response = jsPsych.data.get().last(1).values()[0].response;
+                            var stimulus_index = jsPsych.data.get().last(2).values()[0].trial_num;
+                            if (stimuli.prompt_order[response] == stimuli.order[stimulus_index]) {
+                                console.log('correct')
+                                data.correct = true;
+                            } else {
+                                console.log('incorrect')
+                                data.correct = false;
+                            }
+                            data.response_label = stimuli.labels[stimuli.prompt_order[stimulus_index]]
+                            data.stimulus_label = stimuli.labels[stimuli.order[stimulus_index]]
+                            data.stimulus_variant = stimuli.variant_order[stimulus_index]
+                        }
                     }
                 );
             } else {
@@ -197,13 +213,28 @@
                                 thisDifficulty
                             );
                         },
-                        on_finish: function() {
+                        on_finish: function(data) {
+                            // code for correctness
+                            var response = jsPsych.data.get().last(1).values()[0].response;
+                            var stimulus_index = jsPsych.data.get().last(2).values()[0].trial_num;
+                            if (stimuli.prompt_order[response] == stimuli.order[stimulus_index]) {
+                                console.log('correct')
+                                data.correct = true;
+                            } else {
+                                console.log('incorrect')
+                                data.correct = false;
+                            }
+                            data.response_label = stimuli.labels[stimuli.prompt_order[stimulus_index]]
+                            data.stimulus_label = stimuli.labels[stimuli.order[stimulus_index]]
+                            data.stimulus_variant = stimuli.variant_order[stimulus_index]
+
+                            // adjust difficulty
                             if (stimulus_difficulty.method === 'accuracy') {
                                 thisDifficulty = difficultyTitration(thisDifficulty);
                             } else if (stimulus_difficulty.method === 'specified') {
                                 thisDifficulty = stimulus_difficulty.order[trial];
+                                console.log('next difficulty will be: ', thisDifficulty);
                             }
-
                         }
                     }
                 );
@@ -214,6 +245,7 @@
             timeline: timeline,
             //preload_images: ,
             on_finish: function() {
+                jsPsych.data.displayData();
                 var time = jsPsych.totalTime();
                 jsPsych.data.addProperties({
                     expt_duration: time,
