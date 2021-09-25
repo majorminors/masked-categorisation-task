@@ -37,16 +37,6 @@
             order: [] // generate this later
         };
 
-        function stimulusPathFactory(label, variant, difficulty, whichPath){
-            var stim_path = `stimuli/masked_datasets/${label}/${difficulty}/${variant}.jpg`;
-            var prompt_path = `stimuli/unmasked_datasets/${label}.jpg`;
-            if (whichPath === 'stimulus') {
-                return stim_path;
-            } else if (whichPath === 'prompt') {
-                return prompt_path;
-            }
-        }
-
         var stimuli = {
             labels: [ // these should match stimuli and response prompt names sans extension
                 'car',
@@ -71,63 +61,79 @@
             prompt_html_array: [] // generate this later
         };
 
+        // little function to programmatically generate paths
+        function stimulusPathFactory(label, variant, difficulty, whichPath){
+            var stim_path = `stimuli/masked_datasets/${label}/${difficulty}/${variant}.jpg`;
+            var prompt_path = `stimuli/unmasked_datasets/${label}.jpg`;
+            if (whichPath === 'stimulus') {
+                return stim_path;
+            } else if (whichPath === 'prompt') {
+                return prompt_path;
+            }
+        }
+
+        ////////////////////////////////
+        /* generate trial information */
+        ////////////////////////////////
+
         
+        // let's generate some trial information
         for (i=0; i < stimuli.labels.length; i++) {
 
-            // array of stimulus difficulties valid*repetitions*imagetype
+            // create array of stimulus difficulties valid*repetitions*imagetype
             for (reps = 0; reps < stimulus_difficulty.repetitions; reps++) {
                 stimulus_difficulty.order = stimulus_difficulty.order.concat(stimulus_difficulty.valid);
             }
             // we'll probably want to counterbalance these
 
-            // array of indices for response prompt order
+            // create array of indices for response prompt order - again will probably counter balance these
             stimuli.prompt_order = stimuli.prompt_order.concat(i);
+            // create some html image tags with stimulus paths for the response prompts
             stimuli.prompt_html_array = stimuli.prompt_html_array.concat('<img src="' + stimulusPathFactory(stimuli.labels[i],null,null,'prompt') + '" class="response-img"/>');
+            // we want these to preload the images
             stimuli.prompt_paths = stimuli.prompt_paths.concat(stimulusPathFactory(stimuli.labels[i],null,null,'prompt'));
+
             for (rep = 0; rep < stimuli.quantity; rep++) {
-                // array of indices for stimuli.labels*quantity
+                // generate array of indices for stimuli.labels*quantity
                 stimuli.order = stimuli.order.concat(i);
                 stimuli.variant_order = stimuli.variant_order.concat(rep+1); // plus one because js starts at 0
                 for (diff = 0; diff < stimulus_difficulty.valid.length; diff++) {
                     diffMod = diff+1; // add one because js starts at 0
                     repMod = rep+1; // add one because js starts at 0
+                    // generate these to preload the images
                     stimuli.stimuli_paths = stimuli.stimuli_paths.concat(stimulusPathFactory(stimuli.labels[i],repMod.toString(),diffMod.toString(),'stimulus'));
                 }
             }
         }
-        // we'll probably want to counterbalance these
+        // we'll probably want to counterbalance:
         // stimuli.prompt_order and stimuli.prompt_html_array need to be changed in the same way
         // stimuli.order and stimuli.variant_html_array need to be changed in the same way
 
-        /* initialise timeline array */
+        ////////////////////////////
+        /* jsPsych trial settings */
+        ////////////////////////////
 
-        var timeline = [];
-
-        //////////////////////////
-        /* set up a basic trial */
-        //////////////////////////
-
+        // we'll reuse this as a fixation - shows a cross on the screen. can be changed
         var fixation = {
             type: 'html-keyboard-response',
             stimulus: '<p style="font-size: 48px;">+</p>',
             choices: jsPsych.NO_KEYS,
             trial_duration: fixation_time,
-            data: {experiment_part: 'fixation'}
+            data: {experiment_part: 'fixation'} // we use this information to filter trials
         };
 
         var basic_trial = {
             type: 'image-button-response',
-            // stimulus: 'img/stimulus', // we'll specify this dynamically
+            // stimulus: 'path/to/image', // we'll specify this dynamically
             choices: stimuli.prompt_html_array,
-            // choices: [
-            //     '<img src="img/response-one.png" />',
-            //     '<img src="img/response-two.png" />'
-            // ],
-            //button_html: '<button class="jspsych-btn">%choice%</button>',
+            // choices: ['array','of','html','or','text','to','display'], // we'll make these html images
+            //button_html: '<button class="jspsych-btn">%choice%</button>', // default places 'choices' in buttons, we'll work with that
             prompt: "<p>Select Response</p>",
-            data: {experiment_part: 'trial'}
+            data: {experiment_part: 'trial'} // we use this information to filter trials
         };
 
+
+        // a function to titrate difficulty in the accuracy mode. not very pretty, but hopefully legible
         function difficultyTitration(thisStimDiff) {
             console.log('titrate difficulty');
             console.log('from difficulty: ',thisStimDiff);
@@ -159,15 +165,19 @@
                 return newStimDiff;
         }
         
+        // function to put together the stimulus path based on the trial, the array of stimuli, and the difficulty
         function getStimulus(trial_number, stimDifficulty) {
-            // put together the stimulus path based on the trial, the array of stimuli, and the difficulty
-                    return stimulusPathFactory(stimuli.labels[stimuli.order[trial_number]],stimuli.variant_order[trial_number].toString(),stimDifficulty.toString(),'stimulus');
-
+            return stimulusPathFactory(stimuli.labels[stimuli.order[trial_number]],stimuli.variant_order[trial_number].toString(),stimDifficulty.toString(),'stimulus');
         }
 
-        ////////////////////////
-        /* experiment testing */
-        ////////////////////////
+        ////////////////////////////
+        /* experiment constructor */
+        ////////////////////////////
+
+        /* initialise timeline array */
+
+        var timeline = [];
+
 
         // choose a starting difficulty and declare as a global variable
         if (stimulus_difficulty.method === 'accuracy') {
@@ -175,6 +185,8 @@
         } else if (stimulus_difficulty.method === 'specified') {
             var thisDifficulty = stimulus_difficulty.order[0];
         }
+
+        /* commence generating trials */
 
         for (trial = 0; trial < stimuli.order.length; trial++) {
             if (stimulus_difficulty.method === 'accuracy' && trial < stimulus_difficulty.history) {
@@ -251,6 +263,10 @@
                 );
             }
         }
+
+        ////////////////////////
+        /* initialise jsPsych */
+        ////////////////////////
     
         jsPsych.init({
             timeline: timeline,
