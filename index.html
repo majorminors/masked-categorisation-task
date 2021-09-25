@@ -71,7 +71,8 @@
             quantity: 100, // quantity of variants of each image type
             order: [], // we'll generate this later
             variant_order: [], // generate later
-            stimuli_paths: [], // generate this later
+            stimuli_paths: [], // generate this later for preloading images
+            prompt_paths:  [], // generate this later for preloading images
             prompt_order: [], // generate this later
             prompt_html_array: [] // generate this later
         };
@@ -80,6 +81,7 @@
         // array of indices for response prompt order
             stimuli.prompt_order = stimuli.prompt_order.concat(i);
             stimuli.prompt_html_array = stimuli.prompt_html_array.concat('<img src="' + stimulusPathFactory(stimuli.labels[i],null,null,'prompt') + '" class="response-img"/>');
+            stimuli.prompt_paths = stimuli.prompt_paths.concat(stimulusPathFactory(stimuli.labels[i],null,null,'prompt'));
             for (rep = 0; rep < stimuli.quantity; rep++) {
                 // array of indices for stimuli.labels*quantity
                 stimuli.order = stimuli.order.concat(i);
@@ -92,6 +94,8 @@
             }
         }
         // we'll probably want to counterbalance these
+        // stimuli.prompt_order and stimuli.prompt_html_array need to be changed in the same way
+        // stimuli.order and stimuli.variant_html_array need to be changed in the same way
 
         /* initialise timeline array */
 
@@ -248,7 +252,7 @@
     
         jsPsych.init({
             timeline: timeline,
-            //preload_images: ,
+            preload_images: [stimuli.stimuli_paths, stimuli.prompt_paths],
             on_finish: function() {
                 jsPsych.data.displayData();
                 var time = jsPsych.totalTime();
