@@ -30,7 +30,7 @@
             default: 3, // default stim difficulty (used for first trials to establish accuracy)
             min: 1, // min stimulus difficulty (to limit titration from going too far down)
             max: 5, // max stimulus difficulty (to limit titration from going too far up)
-            method: 'accuracy', // determined by 'accuracy' or 'specified'
+            method: 'specified', // determined by 'accuracy' or 'specified'
             accuracy: 50, // if accuracy, percentage difficulty to titrate to
             history: 4, // if accuracy, number of trials to check accuracy over
             repetitions: 10, // if specified, number of times to present each stimulus difficulty per image type
@@ -232,7 +232,7 @@
                             if (stimulus_difficulty.method === 'accuracy') {
                                 thisDifficulty = difficultyTitration(thisDifficulty);
                             } else if (stimulus_difficulty.method === 'specified') {
-                                thisDifficulty = stimulus_difficulty.order[trial];
+                                thisDifficulty = stimulus_difficulty.order[stimulus_index];
                                 console.log('next difficulty will be: ', thisDifficulty);
                             }
                         }
