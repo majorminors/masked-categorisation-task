@@ -79,7 +79,7 @@
         for (i=0; i < stimuli.labels.length; i++) {
         // array of indices for response prompt order
             stimuli.prompt_order = stimuli.prompt_order.concat(i);
-            stimuli.prompt_html_array = stimuli.prompt_html_array.concat('<img src="' + stimulusPathFactory(stimuli.labels[i],null,null,'prompt') + '" />');
+            stimuli.prompt_html_array = stimuli.prompt_html_array.concat('<img src="' + stimulusPathFactory(stimuli.labels[i],null,null,'prompt') + '" class="response-img"/>');
             for (rep = 0; rep < stimuli.quantity; rep++) {
                 // array of indices for stimuli.labels*quantity
                 stimuli.order = stimuli.order.concat(i);
@@ -117,7 +117,7 @@
             //     '<img src="img/response-one.png" />',
             //     '<img src="img/response-two.png" />'
             // ],
-            //button_html: ['<button class="jspsych-btn">%choice%</button>'],
+            //button_html: '<button class="jspsych-btn">%choice%</button>',
             prompt: "<p>Select Response</p>",
             data: {experiment_part: 'trial'}
         };
