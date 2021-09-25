@@ -30,19 +30,13 @@
             default: 3, // default stim difficulty (used for first trials to establish accuracy)
             min: 1, // min stimulus difficulty (to limit titration from going too far down)
             max: 5, // max stimulus difficulty (to limit titration from going too far up)
-            method: 'specified', // determined by 'accuracy' or 'specified'
+            method: 'accuracy', // determined by 'accuracy' or 'specified'
             accuracy: 50, // if accuracy, percentage difficulty to titrate to
             history: 4, // if accuracy, number of trials to check accuracy over
             repetitions: 10, // if specified, number of times to present each stimulus difficulty per image type
             order: [] // generate this later
         };
 
-        // array of stimulus difficulties valid*repetitions
-        for (reps = 0; reps < stimulus_difficulty.repetitions; reps++) {
-            stimulus_difficulty.order = stimulus_difficulty.order.concat(stimulus_difficulty.valid);
-        }
-        // we'll probably want to counterbalance these
-        
         function stimulusPathFactory(label, variant, difficulty, whichPath){
             var stim_path = `stimuli/masked_datasets/${label}/${difficulty}/${variant}.jpg`;
             var prompt_path = `stimuli/unmasked_datasets/${label}.jpg`;
@@ -77,8 +71,16 @@
             prompt_html_array: [] // generate this later
         };
 
+        
         for (i=0; i < stimuli.labels.length; i++) {
-        // array of indices for response prompt order
+
+            // array of stimulus difficulties valid*repetitions*imagetype
+            for (reps = 0; reps < stimulus_difficulty.repetitions; reps++) {
+                stimulus_difficulty.order = stimulus_difficulty.order.concat(stimulus_difficulty.valid);
+            }
+            // we'll probably want to counterbalance these
+
+            // array of indices for response prompt order
             stimuli.prompt_order = stimuli.prompt_order.concat(i);
             stimuli.prompt_html_array = stimuli.prompt_html_array.concat('<img src="' + stimulusPathFactory(stimuli.labels[i],null,null,'prompt') + '" class="response-img"/>');
             stimuli.prompt_paths = stimuli.prompt_paths.concat(stimulusPathFactory(stimuli.labels[i],null,null,'prompt'));
@@ -158,7 +160,7 @@
         }
         
         function getStimulus(trial_number, stimDifficulty) {
-            // put together the stimulus path based on the trial, the array of timuli, and the difficulty
+            // put together the stimulus path based on the trial, the array of stimuli, and the difficulty
                     return stimulusPathFactory(stimuli.labels[stimuli.order[trial_number]],stimuli.variant_order[trial_number].toString(),stimDifficulty.toString(),'stimulus');
 
         }
@@ -174,7 +176,7 @@
             var thisDifficulty = stimulus_difficulty.order[0];
         }
 
-        for (trial = 0; trial < 7; trial++) {
+        for (trial = 0; trial < stimuli.order.length; trial++) {
             if (stimulus_difficulty.method === 'accuracy' && trial < stimulus_difficulty.history) {
                 // add enough trials to start checking history for accuracy
                 timeline.push(
