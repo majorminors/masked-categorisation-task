@@ -123,6 +123,8 @@
         };
 
         function difficultyTitration(thisStimDiff) {
+            console.log('titrate difficulty');
+            console.log('from difficulty: ',thisStimDiff);
 
                 // filter to trials, then count correct trials
                 var last_correct = jsPsych.data.get().filter({
@@ -131,7 +133,8 @@
 
                 // update stimulus difficulty based on desired accuracy
                 var last_accuracy = (last_correct/stimulus_difficulty.history)*100;
-                if (last_accuracy > stimulus_difficulty.accuracy) {
+            console.log('last accuracy was: ',last_accuracy);
+                if (last_accuracy < stimulus_difficulty.accuracy) {
                     var newStimDiff = thisStimDiff+1;
                 } else if (last_accuracy > stimulus_difficulty.accuracy) {
                     var newStimDiff = thisStimDiff-1;
@@ -145,6 +148,7 @@
                 } else if (newStimDiff > stimulus_difficulty.max) {
                     newStimDiff = stimulus_difficulty.max;
                 }
+            console.log('new difficulty: ',newStimDiff);
 
                 return newStimDiff;
         }
