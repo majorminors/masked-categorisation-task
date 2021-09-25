@@ -163,7 +163,12 @@
         /* experiment testing */
         ////////////////////////
 
-        var thisDifficulty = stimulus_difficulty.default; // declare this as global variable
+        // choose a starting difficulty and declare as a global variable
+        if (stimulus_difficulty.method === 'accuracy') {
+            var thisDifficulty = stimulus_difficulty.default;
+        } else if (stimulus_difficulty.method === 'specified') {
+            var thisDifficulty = stimulus_difficulty.order[0];
+        }
 
         for (trial = 0; trial < 7; trial++) {
             if (stimulus_difficulty.method === 'accuracy' && trial < stimulus_difficulty.history) {
@@ -232,7 +237,7 @@
                             if (stimulus_difficulty.method === 'accuracy') {
                                 thisDifficulty = difficultyTitration(thisDifficulty);
                             } else if (stimulus_difficulty.method === 'specified') {
-                                thisDifficulty = stimulus_difficulty.order[stimulus_index];
+                                thisDifficulty = stimulus_difficulty.order[stimulus_index+1];
                                 console.log('next difficulty will be: ', thisDifficulty);
                             }
                         }
