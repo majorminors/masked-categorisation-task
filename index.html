@@ -155,8 +155,6 @@
         
         function getStimulus(trial_number, stimDifficulty) {
             // put together the stimulus path based on the trial, the array of timuli, and the difficulty
-            console.log(trial_number);
-            console.log(stimDifficulty);
                     return stimulusPathFactory(stimuli.labels[stimuli.order[trial_number]],stimuli.variant_order[trial_number].toString(),stimDifficulty.toString(),'stimulus');
 
         }
@@ -178,10 +176,10 @@
                     },
                     {...basic_trial,
                          stimulus: function() {
-                            getStimulus(
+                            return getStimulus(
                                 jsPsych.data.get().last(1).values()[0].trial_num,
                                 stimulus_difficulty.default
-                            )
+                            );
                          },
                     }
                 );
@@ -194,10 +192,10 @@
                     },
                     {...basic_trial,
                         stimulus: function() {
-                            getStimulus(
+                            return getStimulus(
                                 jsPsych.data.get().last(1).values()[0].trial_num, // use the index we specified in fixation
                                 thisDifficulty
-                            )
+                            );
                         },
                         on_finish: function() {
                             if (stimulus_difficulty.method === 'accuracy') {
