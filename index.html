@@ -273,10 +273,6 @@
             preload_images: [stimuli.stimuli_paths, stimuli.prompt_paths],
             on_finish: function() {
                 jsPsych.data.displayData();
-                var time = jsPsych.totalTime();
-                jsPsych.data.addProperties({
-                    expt_duration: time,
-                });
             }
         });
 
