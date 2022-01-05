@@ -89,7 +89,8 @@
             // create array of indices for response prompt order - again will probably counter balance these
             stimuli.prompt_order = stimuli.prompt_order.concat(i);
             // create some html image tags with stimulus paths for the response prompts
-            stimuli.prompt_html_array = stimuli.prompt_html_array.concat('<img src="' + stimulusPathFactory(stimuli.labels[i],null,null,'prompt') + '" class="response-img"/>');
+            // we don't want images, just the words, so we won't use this
+            //stimuli.prompt_html_array = stimuli.prompt_html_array.concat('<img src="' + stimulusPathFactory(stimuli.labels[i],null,null,'prompt') + '" class="response-img"/>');
             // we want these to preload the images
             stimuli.prompt_paths = stimuli.prompt_paths.concat(stimulusPathFactory(stimuli.labels[i],null,null,'prompt'));
 
@@ -125,9 +126,8 @@
         var basic_trial = {
             type: 'image-button-response',
             // stimulus: 'path/to/image', // we'll specify this dynamically
-            choices: stimuli.prompt_html_array,
+            choices: stimuli.labels.concat('none of these','not sure'),
             // choices: ['array','of','html','or','text','to','display'], // we'll make these html images
-            //button_html: '<button class="jspsych-btn">%choice%</button>', // default places 'choices' in buttons, we'll work with that
             prompt: "<p>Select Response</p>",
             data: {experiment_part: 'trial'} // we use this information to filter trials
         };
