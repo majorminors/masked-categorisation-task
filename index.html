@@ -24,6 +24,10 @@
         ///////////////////
 
         var fixation_time = 200; // ms to display fixation
+        var stimulus_display_time = 50; // ms to display trial
+        var stimulus_blank_time = 30; // ms to display blank screen after stimulus
+        var mask_time = 80; // ms to display mask
+        var response_time = 2000; // max time for participant response
 
         var stimulus_difficulty = {
             valid: [1,2,3,4,5], // valid stimulus difficulties, should correspond to folder names
@@ -123,11 +127,22 @@
             data: {experiment_part: 'fixation'} // we use this information to filter trials
         };
 
+        var random_mask = {
+            type: 'image-button-response',
+            stimulus: 'stimuli/mask_placeholder.png',
+            choices: stimuli.labels.concat('none of these','not sure'),
+            stimulus_duration: mask_time,
+            trial_duration: response_time,
+            data: {experiment_part: 'mask'} // we use this information to filter trials
+        };
+
         var basic_trial = {
             type: 'image-button-response',
             // stimulus: 'path/to/image', // we'll specify this dynamically
             choices: stimuli.labels.concat('none of these','not sure'),
             // choices: ['array','of','html','or','text','to','display'], // we'll make these html images
+            stimulus_duration: stimulus_display_time,
+            trial_duration: stimulus_display_time+stimulus_blank_time,
             prompt: "<p>Select Response</p>",
             data: {experiment_part: 'trial'} // we use this information to filter trials
         };
@@ -220,7 +235,12 @@
                             data.stimulus_label = stimuli.labels[stimuli.order[stimulus_index]]
                             data.stimulus_variant = stimuli.variant_order[stimulus_index]
                         }
-                    }
+                    },
+                    {...random_mask,
+                        data: {...random_mask.data,
+                            trial_num: trial
+                        }
+                    },
                 );
             } else {
                 timeline.push(
@@ -259,7 +279,12 @@
                                 console.log('next difficulty will be: ', thisDifficulty);
                             }
                         }
-                    }
+                    },
+                    {...random_mask,
+                        data: {...random_mask.data,
+                            trial_num: trial
+                        }
+                    },
                 );
             }
         }
