@@ -217,13 +217,13 @@
                         }
                     },
                     {...stimulus_presentation,
-                         stimulus: function() {
+                        stimulus: function() {
                             console.log('using default difficulty to establish baseline');
                             return getStimulus(
                                 jsPsych.data.get().last(1).values()[0].trial_num,
                                 stimulus_difficulty.default
                             );
-                         },
+                        },
                     },
                     {...random_mask,
                         on_finish: function(data) {
@@ -237,9 +237,9 @@
                                 console.log('incorrect')
                                 data.correct = false;
                             }
-                            data.response_label = stimuli.labels[stimuli.prompt_order[stimulus_index]]
-                            data.stimulus_label = stimuli.labels[stimuli.order[stimulus_index]]
-                            data.stimulus_variant = stimuli.variant_order[stimulus_index]
+                            data.response_label = stimuli.labels[stimuli.prompt_order[stimulus_index]];
+                            data.stimulus_label = stimuli.labels[stimuli.order[stimulus_index]];
+                            data.stimulus_variant = stimuli.variant_order[stimulus_index];
                         }
                     },
                 );
@@ -270,9 +270,9 @@
                                 console.log('incorrect')
                                 data.correct = false;
                             }
-                            data.response_label = stimuli.labels[stimuli.prompt_order[stimulus_index]]
-                            data.stimulus_label = stimuli.labels[stimuli.order[stimulus_index]]
-                            data.stimulus_variant = stimuli.variant_order[stimulus_index]
+                            data.response_label = stimuli.labels[stimuli.prompt_order[stimulus_index]];
+                            data.stimulus_label = stimuli.labels[stimuli.order[stimulus_index]];
+                            data.stimulus_variant = stimuli.variant_order[stimulus_index];
 
                             // adjust difficulty
                             if (stimulus_difficulty.method === 'accuracy') {
