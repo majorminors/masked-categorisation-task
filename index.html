@@ -64,6 +64,9 @@
             prompt_order: [], // generate this later
             prompt_html_array: [] // generate this later
         };
+        stimuli.accuracy = stimuli.labels.map(
+            () => { return stimulus_difficulty.accuracy;
+        }); // an accuracy for each stimulus to be set to default and updated per trial
 
         // little function to programmatically generate paths
         function stimulusPathFactory(label, variant, difficulty, whichPath){
