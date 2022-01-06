@@ -133,10 +133,10 @@
             choices: stimuli.labels.concat('none of these','not sure'),
             stimulus_duration: mask_time,
             trial_duration: response_time,
-            data: {experiment_part: 'mask'} // we use this information to filter trials
+            data: {experiment_part: 'response'} // we use this information to filter trials
         };
 
-        var basic_trial = {
+        var stimulus_presentation = {
             type: 'image-button-response',
             // stimulus: 'path/to/image', // we'll specify this dynamically
             choices: stimuli.labels.concat('none of these','not sure'),
@@ -144,7 +144,7 @@
             stimulus_duration: stimulus_display_time,
             trial_duration: stimulus_display_time+stimulus_blank_time,
             prompt: "<p>Select Response</p>",
-            data: {experiment_part: 'trial'} // we use this information to filter trials
+            data: {experiment_part: 'presentation'} // we use this information to filter trials
         };
 
 
@@ -155,7 +155,7 @@
 
                 // filter to trials, then count correct trials
                 var last_correct = jsPsych.data.get().filter({
-                    experiment_part: 'trial'
+                    experiment_part: 'response'
                 }).last(stimulus_difficulty.history).filter({correct: true}).count();
 
                 // update stimulus difficulty based on desired accuracy
@@ -212,7 +212,7 @@
                             trial_num: trial
                         }
                     },
-                    {...basic_trial,
+                    {...stimulus_presentation,
                          stimulus: function() {
                             console.log('using default difficulty to establish baseline');
                             return getStimulus(
@@ -220,10 +220,12 @@
                                 stimulus_difficulty.default
                             );
                          },
+                    },
+                    {...random_mask,
                         on_finish: function(data) {
                             // code for correctness
                             var response = jsPsych.data.get().last(1).values()[0].response;
-                            var stimulus_index = jsPsych.data.get().last(2).values()[0].trial_num;
+                            var stimulus_index = jsPsych.data.get().last(3).values()[0].trial_num;
                             if (stimuli.prompt_order[response] == stimuli.order[stimulus_index]) {
                                 console.log('correct')
                                 data.correct = true;
@@ -236,11 +238,6 @@
                             data.stimulus_variant = stimuli.variant_order[stimulus_index]
                         }
                     },
-                    {...random_mask,
-                        data: {...random_mask.data,
-                            trial_num: trial
-                        }
-                    },
                 );
             } else {
                 timeline.push(
@@ -249,17 +246,19 @@
                             trial_num: trial
                         }
                     },
-                    {...basic_trial,
+                    {...stimulus_presentation,
                         stimulus: function() {
                             return getStimulus(
                                 jsPsych.data.get().last(1).values()[0].trial_num, // use the index we specified in fixation
                                 thisDifficulty
                             );
                         },
+                    },
+                    {...random_mask,
                         on_finish: function(data) {
                             // code for correctness
                             var response = jsPsych.data.get().last(1).values()[0].response;
-                            var stimulus_index = jsPsych.data.get().last(2).values()[0].trial_num;
+                            var stimulus_index = jsPsych.data.get().last(3).values()[0].trial_num;
                             if (stimuli.prompt_order[response] == stimuli.order[stimulus_index]) {
                                 console.log('correct')
                                 data.correct = true;
@@ -278,11 +277,6 @@
                                 thisDifficulty = stimulus_difficulty.order[stimulus_index+1];
                                 console.log('next difficulty will be: ', thisDifficulty);
                             }
-                        }
-                    },
-                    {...random_mask,
-                        data: {...random_mask.data,
-                            trial_num: trial
                         }
                     },
                 );
