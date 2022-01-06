@@ -42,7 +42,7 @@
         };
 
         var stimuli = {
-            labels: [ // these should match stimuli and response prompt names sans extension
+            labels: [ // these should match stimuli names (sans extension) and will be response prompt names for coding purposes
                 'car',
                 'elephant',
                 'fish',
@@ -72,6 +72,7 @@
             if (whichPath === 'stimulus') {
                 return stim_path;
             } else if (whichPath === 'prompt') {
+                // we can also return the images in the prompt button if we like
                 return prompt_path;
             }
         }
