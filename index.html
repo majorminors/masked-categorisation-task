@@ -140,7 +140,7 @@
 
         var random_mask = {
             type: 'image-button-response',
-            // stimulus: 'stimuli/mask_placeholder.png',
+            // stimulus: 'stimuli/mask_placeholder.png', // we generate this dynamically in the trial loop
             choices: stimuli.labels.concat('none of these','not sure'),
             stimulus_duration: mask_time,
             trial_duration: response_time,
@@ -149,7 +149,7 @@
 
         var stimulus_presentation = {
             type: 'image-button-response',
-            // stimulus: 'path/to/image', // we'll specify this dynamically
+            // stimulus: 'path/to/image', // we specify this dynamically in the trial loop
             choices: stimuli.labels.concat('none of these','not sure'),
             // choices: ['array','of','html','or','text','to','display'], // we'll make these html images
             stimulus_duration: stimulus_display_time,
