@@ -1,8 +1,9 @@
-clc;
-clear all;
-close all;
+function generate_noise_masks(rootDir)
 
-rootDir = 'C:\Users\dm06\Downloads\masked-categorisation-task-master\masked-categorisation-task-master\stimuli\unmasked_datasets';
+%clc;
+%clear all;
+%close all;
+
 loop = 0;
 
 % some settings
@@ -58,6 +59,9 @@ for i = 1:length(allsubdirs)
         % write the mask
         imwrite(Noise_mask,[imgName '.jpg']);
     end
+end
+
+return
 end
 
 

@@ -1,18 +1,15 @@
+function mask_intensity_adjuster()
 %% to be run after generating masks
 
 inPATH = 'masks/';
 
-outPATH = 'masks_adjusted/';
-
-​
+outPATH = 'asks_adjusted/';
 
 Q = dir(inPATH);
 
 s = size(Q);
 
 intensities = [];
-
-​
 
 for c = 3:s(1)
 
@@ -28,8 +25,6 @@ end
 
 mean_intensity = mean(intensities);
 
-​
-
 for c = 3:s(1)
 
     the_name = Q(c).name;
@@ -44,4 +39,7 @@ for c = 3:s(1)
 
     imwrite(adjusted, strcat(outPATH, the_name));
 
+end
+
+return
 end
