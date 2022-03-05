@@ -43,7 +43,7 @@
         };
 
         var stimuli = {
-            labels: [ // these should match stimuli names (sans extension) and will be response prompt names for coding purposes
+            labels: [ // should be equal to image category and category folder name, used as response prompt name also
                 'car',
                 'elephant',
                 'fish',
@@ -57,10 +57,13 @@
                 'sewing_machine',
                 'violin',
             ],
-            quantity: 100, // quantity of variants of each image type
-            order: [], // we'll generate this later
+            exemplars: 16, // quantity of exemplars of each category
+            quantity: 100, // quantity of variants of each image exemplar
+            category_order: [], // we'll generate this later
             variant_order: [], // generate later
+            exemplar_order: [], //generate this later
             stimuli_paths: [], // generate this later for preloading images
+            mask_paths: [], // generate for later
             prompt_paths:  [], // generate this later for preloading images
             prompt_order: [], // generate this later
             prompt_html_array: [] // generate this later
@@ -75,6 +78,8 @@
         ////////////////////////////////
 
         
+        console.log("generate trial information");
+
         // let's generate some trial information
         for (i=0; i < stimuli.labels.length; i++) {
 
@@ -90,30 +95,38 @@
             // we don't want images, just the words, so we won't use this
             //stimuli.prompt_html_array = stimuli.prompt_html_array.concat('<img src="' + stimulusPathFactory(stimuli.labels[i],null,null,'prompt') + '" class="response-img"/>');
             // we want these to preload the images
-            stimuli.prompt_paths = stimuli.prompt_paths.concat(stimulusPathFactory(stimuli.labels[i],null,null,'prompt'));
+            //stimuli.prompt_paths = stimuli.prompt_paths.concat(stimulusPathFactory(stimuli.labels[i],null,null,'prompt'));
 
-            // we want these to preload the images
-            stimuli.mask_paths = stimuli.prompt_paths.concat(stimulusPathFactory(stimuli.labels[i],null,null,'mask'));
+            // now we loop through the number of exempars
+            for (exemplar = 0; exemplar < stimuli.exemplars; exemplar++) {
+                exemplarMod = exemplar+1; // add one because js starts at 0
 
-            for (rep = 0; rep < stimuli.quantity; rep++) {
-                // generate array of indices for stimuli.labels*quantity
-                stimuli.order = stimuli.order.concat(i);
-                stimuli.variant_order = stimuli.variant_order.concat(rep+1); // plus one because js starts at 0
-                for (diff = 0; diff < stimulus_difficulty.valid.length; diff++) {
-                    diffMod = diff+1; // add one because js starts at 0
-                    repMod = rep+1; // add one because js starts at 0
-                    // generate these to preload the images
-                    stimuli.stimuli_paths = stimuli.stimuli_paths.concat(stimulusPathFactory(stimuli.labels[i],repMod.toString(),diffMod.toString(),'stimulus'));
+                // we want these to preload the images
+                stimuli.mask_paths = stimuli.mask_paths.concat(stimulusPathFactory(stimuli.labels[i],exemplarMod.toString(),null,null,'mask'));
+
+                for (rep = 0; rep < stimuli.quantity; rep++) {
+                    // generate array of indices for stimuli.labels*quantity
+                    stimuli.category_order = stimuli.category_order.concat(i);
+                    stimuli.variant_order = stimuli.variant_order.concat(rep+1); // plus one because js starts at 0
+                    stimuli.exemplar_order = stimuli.exemplar_order.concat(exemplar+1);
+                    for (diff = 0; diff < stimulus_difficulty.valid.length; diff++) {
+                        diffMod = diff+1; // add one because js starts at 0
+                        repMod = rep+1; // add one because js starts at 0
+                        // generate these to preload the images
+                        stimuli.stimuli_paths = stimuli.stimuli_paths.concat(stimulusPathFactory(stimuli.labels[i],exemplarMod.toString(),repMod.toString(),diffMod.toString(),'stimulus'));
+                    }
                 }
             }
         }
         // we'll probably want to counterbalance:
         // stimuli.prompt_order and stimuli.prompt_html_array need to be changed in the same way
-        // stimuli.order and stimuli.variant_html_array need to be changed in the same way
+        // stimuli.category_order and stimuli.variant_html_array need to be changed in the same way
 
         ////////////////////////////
         /* jsPsych trial settings */
         ////////////////////////////
+
+        console.log("generate trial settings");
 
         // we'll reuse this as a fixation - shows a cross on the screen. can be changed
         var fixation = {
@@ -149,6 +162,8 @@
         /* experiment constructor */
         ////////////////////////////
 
+        console.log("construct experiment");
+
         /* initialise timeline array */
 
         var timeline = [];
@@ -163,7 +178,7 @@
 
         /* commence generating trials */
 
-        for (trial = 0; trial < stimuli.order.length; trial++) {
+        for (trial = 0; trial < stimuli.category_order.length; trial++) {
             if (stimulus_difficulty.method === 'accuracy' && trial < stimulus_difficulty.history) {
                 // add enough trials to start checking history for accuracy
                 timeline.push(
@@ -191,7 +206,7 @@
                             // code for correctness
                             var response = jsPsych.data.get().last(1).values()[0].response;
                             var stimulus_index = jsPsych.data.get().last(3).values()[0].trial_num;
-                            if (stimuli.prompt_order[response] == stimuli.order[stimulus_index]) {
+                            if (stimuli.prompt_order[response] == stimuli.category_order[stimulus_index]) {
                                 console.log('correct')
                                 data.correct = true;
                             } else {
@@ -199,7 +214,7 @@
                                 data.correct = false;
                             }
                             data.response_label = stimuli.labels[stimuli.prompt_order[stimulus_index]];
-                            data.stimulus_label = stimuli.labels[stimuli.order[stimulus_index]];
+                            data.stimulus_label = stimuli.labels[stimuli.category_order[stimulus_index]];
                             data.stimulus_variant = stimuli.variant_order[stimulus_index];
                         }
                     },
@@ -229,7 +244,7 @@
                             // code for correctness
                             var response = jsPsych.data.get().last(1).values()[0].response;
                             var stimulus_index = jsPsych.data.get().last(3).values()[0].trial_num;
-                            if (stimuli.prompt_order[response] == stimuli.order[stimulus_index]) {
+                            if (stimuli.prompt_order[response] == stimuli.category_order[stimulus_index]) {
                                 console.log('correct')
                                 data.correct = true;
                             } else {
@@ -237,7 +252,7 @@
                                 data.correct = false;
                             }
                             data.response_label = stimuli.labels[stimuli.prompt_order[stimulus_index]];
-                            data.stimulus_label = stimuli.labels[stimuli.order[stimulus_index]];
+                            data.stimulus_label = stimuli.labels[stimuli.category_order[stimulus_index]];
                             data.stimulus_variant = stimuli.variant_order[stimulus_index];
 
                             // adjust difficulty
@@ -256,6 +271,8 @@
         ////////////////////////
         /* initialise jsPsych */
         ////////////////////////
+
+        console.log("initialise jsPsych");
     
         jsPsych.init({
             timeline: timeline,
