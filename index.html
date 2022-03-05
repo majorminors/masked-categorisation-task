@@ -35,11 +35,8 @@
             default: 3, // default stim difficulty (used for first trials to establish accuracy)
             min: 1, // min stimulus difficulty (to limit titration from going too far down)
             max: 5, // max stimulus difficulty (to limit titration from going too far up)
-            method: 'accuracy', // determined by 'accuracy' or 'specified'
-            accuracy: 50, // if accuracy, percentage difficulty to titrate to
-            history: 4, // if accuracy, number of trials to check accuracy over
-            repetitions: 10, // if specified, number of times to present each stimulus difficulty per image type
-            order: [] // generate this later
+            accuracy: 50, // percentage difficulty to titrate to
+            history: 4, // number of trials to check accuracy over
         };
 
         var stimuli = {
@@ -83,19 +80,8 @@
         // let's generate some trial information
         for (i=0; i < stimuli.labels.length; i++) {
 
-            // create array of stimulus difficulties valid*repetitions*imagetype
-            for (reps = 0; reps < stimulus_difficulty.repetitions; reps++) {
-                stimulus_difficulty.order = stimulus_difficulty.order.concat(stimulus_difficulty.valid);
-            }
-            // we'll probably want to counterbalance these
-
             // create array of indices for response prompt order - again will probably counter balance these
             stimuli.prompt_order = stimuli.prompt_order.concat(i);
-            // create some html image tags with stimulus paths for the response prompts
-            // we don't want images, just the words, so we won't use this
-            //stimuli.prompt_html_array = stimuli.prompt_html_array.concat('<img src="' + stimulusPathFactory(stimuli.labels[i],null,null,'prompt') + '" class="response-img"/>');
-            // we want these to preload the images
-            //stimuli.prompt_paths = stimuli.prompt_paths.concat(stimulusPathFactory(stimuli.labels[i],null,null,'prompt'));
 
             // now we loop through the number of exempars
             for (exemplar = 0; exemplar < stimuli.exemplars; exemplar++) {
@@ -119,8 +105,8 @@
             }
         }
         // we'll probably want to counterbalance:
-        // stimuli.prompt_order and stimuli.prompt_html_array need to be changed in the same way
-        // stimuli.category_order and stimuli.variant_html_array need to be changed in the same way
+        // stimuli.prompt_order
+        // stimuli.category_order
 
         ////////////////////////////
         /* jsPsych trial settings */
@@ -168,18 +154,12 @@
 
         var timeline = [];
 
-
-        // choose a starting difficulty and declare as a global variable
-        if (stimulus_difficulty.method === 'accuracy') {
-            var thisDifficulty = stimulus_difficulty.default;
-        } else if (stimulus_difficulty.method === 'specified') {
-            var thisDifficulty = stimulus_difficulty.order[0];
-        }
+        var thisDifficulty = stimulus_difficulty.default;
 
         /* commence generating trials */
 
         for (trial = 0; trial < stimuli.category_order.length; trial++) {
-            if (stimulus_difficulty.method === 'accuracy' && trial < stimulus_difficulty.history) {
+            if (trial < stimulus_difficulty.history) {
                 // add enough trials to start checking history for accuracy
                 timeline.push(
                     {...fixation,
@@ -256,12 +236,7 @@
                             data.stimulus_variant = stimuli.variant_order[stimulus_index];
 
                             // adjust difficulty
-                            if (stimulus_difficulty.method === 'accuracy') {
-                                thisDifficulty = difficultyTitration(thisDifficulty);
-                            } else if (stimulus_difficulty.method === 'specified') {
-                                thisDifficulty = stimulus_difficulty.order[stimulus_index+1];
-                                console.log('next difficulty will be: ', thisDifficulty);
-                            }
+                            thisDifficulty = difficultyTitration(thisDifficulty);
                         }
                     },
                 );
