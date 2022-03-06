@@ -56,6 +56,7 @@
                 'violin',
             ],
             exemplars: 16, // quantity of exemplars of each category
+            exemplars_per_block: 2, // number of exemplars to include in each block
             quantity: 100, // quantity of variants of each image exemplar
             category_order: [], // we'll generate this later
             variant_order: [], // generate later
@@ -66,10 +67,6 @@
             prompt_order: [], // generate this later
             prompt_html_array: [] // generate this later
         };
-        stimuli.accuracy = stimuli.labels.map( // new array mapped to the length of stimuli.labels
-            () => { return stimulus_difficulty.accuracy; } // with each value the return value of this function
-        ); // an accuracy for each stimulus to be set to chance and updated per trial
-
 
         ////////////////////////////////
         /* generate trial information */
@@ -78,33 +75,55 @@
         
         console.log("generate trial information");
 
-        // let's generate some trial information
-        for (i=0; i < stimuli.labels.length; i++) {
+        // while labels*exemplar*variant--
+        // loop through labels
+        // randomly select x number of exemplars (e.g. 2) from a subselection of exemplars
+        // shuffle that iteration of labels (labels by x exemplars)
+        // assemble paths for preloading that block
+        // then put all that in an array of arrays per block
 
-            // create array of indices for response prompt order - again will probably counter balance these
-            stimuli.prompt_order = stimuli.prompt_order.concat(i);
+// get total trials to loop through
+var trialsRemaining = stimuli.labels.length*stimuli.exemplars*stimuli.quantity;
+// alrighty, let's loop though our trials!
+while (trialsRemaining > 0) {
+    // select random exemplars for this block of labels
+    var randomExemplars = [];
+    var randomVariants = [];
+    for (exemplarNum=0; exemplarNum < stimuli.exemplars_per_block; exemplarNum++) {
+        randomExemplars[exemplarNum] = randomNumberFrom(1,stimuli.exemplars);
+        randomVariants[exemplarNum] = randomNumberFrom(1,stimuli.quantity);
+    }
+    // loop through labels
+    var tmpExemplars = [];
+    var tmpStimuli = [];
+    var tmpVariants = [];
+    for (stimNum=0; stimNum < stimuli.labels.length; stimNum++) {
+        // concatenate our randomExemplars for each stimulus category
+        tmpExemplars = tmpExemplars.concat(randomExemplars);
 
-            // now we loop through the number of exempars
-            for (exemplar = 0; exemplar < stimuli.exemplars; exemplar++) {
-                exemplarMod = exemplar+1; // add one because js starts at 0
+        // get an equivalent array so we know what stimuli these exemplars belong to
+        tmpStimuli = tmpStimuli.concat(Array(stimuli.exemplars_per_block).fill(stimNum));
 
-                // we want these to preload the images
-                stimuli.mask_paths = stimuli.mask_paths.concat(stimulusPathFactory(stimuli.labels[i],exemplarMod.toString(),null,null,'mask'));
+        // and concat our variants
+        tmpVariants = tmpVariants.concat(randomVariants);
 
-                for (rep = 0; rep < stimuli.quantity; rep++) {
-                    // generate array of indices for stimuli.labels*quantity
-                    stimuli.category_order = stimuli.category_order.concat(i);
-                    stimuli.variant_order = stimuli.variant_order.concat(rep+1); // plus one because js starts at 0
-                    stimuli.exemplar_order = stimuli.exemplar_order.concat(exemplar+1);
-                    for (diff = 0; diff < stimulus_difficulty.valid.length; diff++) {
-                        diffMod = diff+1; // add one because js starts at 0
-                        repMod = rep+1; // add one because js starts at 0
-                        // generate these to preload the images
-                        stimuli.stimuli_paths = stimuli.stimuli_paths.concat(stimulusPathFactory(stimuli.labels[i],exemplarMod.toString(),repMod.toString(),diffMod.toString(),'stimulus'));
-                    }
-                }
-            }
-        }
+        // now we iterate our trials remaining
+        trialsRemaining = trialsRemaining-(1*stimuli.exemplars_per_block);
+    }
+
+    shuffle(tmpStimuli,tmpExemplars,tmpVariants);
+
+    stimuli.category_order = stimuli.category_order.concat(tmpStimuli);
+    stimuli.exemplar_order = stimuli.exemplar_order.concat(tmpExemplars);
+    stimuli.variant_order = stimuli.variant_order.concat(tmpVariants);
+}
+
+                    //for (diff = 0; diff < stimulus_difficulty.valid.length; diff++) {
+                    //    diffMod = diff+1; // add one because js starts at 0
+                    //    repMod = rep+1; // add one because js starts at 0
+                    //    // generate these to preload the images
+                    //    stimuli.stimuli_paths = stimuli.stimuli_paths.concat(stimulusPathFactory(stimuli.labels[i],exemplarMod.toString(),repMod.toString(),diffMod.toString(),'stimulus'));
+                    //}
         // we'll probably want to counterbalance:
         // stimuli.prompt_order
         // stimuli.category_order
