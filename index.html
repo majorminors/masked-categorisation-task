@@ -114,7 +114,7 @@
             stimuli.variant_order = stimuli.variant_order.concat(tmpVariants);
         }
 
-        // we're porbably going to want to preload images, so:
+        // we're probably going to want to preload images, so:
         // https://www.jspsych.org/7.1/overview/media-preloading/#manual-preloading
         //for (diff = 0; diff < stimulus_difficulty.valid.length; diff++) {
         //    diffMod = diff+1; // add one because js starts at 0
@@ -143,6 +143,7 @@
             // stimulus: 'stimuli/mask_placeholder.png', // we generate this dynamically in the trial loop
             stimulus_height: 500,
             choices: stimuli.labels.concat('none of these','not sure'),
+            button_html: '<button class="jspsych-btn" style="width: 150px">%choice%</button>',
             margin_vertical: 4,
             prompt: "<p>Select Response</p>",
             stimulus_duration: mask_time,
