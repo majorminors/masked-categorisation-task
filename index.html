@@ -75,58 +75,53 @@
         
         console.log("generate trial information");
 
-        // while labels*exemplar*variant--
-        // loop through labels
-        // randomly select x number of exemplars (e.g. 2) from a subselection of exemplars
-        // shuffle that iteration of labels (labels by x exemplars)
-        // assemble paths for preloading that block
-        // then put all that in an array of arrays per block
+        // counterbalance this when we move it into JATOS and can do batch control
+        stimuli.prompt_order = Array.from({length: stimuli.labels.length}, (e, i)=> i);
 
-// get total trials to loop through
-var trialsRemaining = stimuli.labels.length*stimuli.exemplars*stimuli.quantity;
-// alrighty, let's loop though our trials!
-while (trialsRemaining > 0) {
-    // select random exemplars for this block of labels
-    var randomExemplars = [];
-    var randomVariants = [];
-    for (exemplarNum=0; exemplarNum < stimuli.exemplars_per_block; exemplarNum++) {
-        randomExemplars[exemplarNum] = randomNumberFrom(1,stimuli.exemplars);
-        randomVariants[exemplarNum] = randomNumberFrom(1,stimuli.quantity);
-    }
-    // loop through labels
-    var tmpExemplars = [];
-    var tmpStimuli = [];
-    var tmpVariants = [];
-    for (stimNum=0; stimNum < stimuli.labels.length; stimNum++) {
-        // concatenate our randomExemplars for each stimulus category
-        tmpExemplars = tmpExemplars.concat(randomExemplars);
+        // get total trials to loop through
+        var trialsRemaining = stimuli.labels.length*stimuli.exemplars*stimuli.quantity;
+        // alrighty, let's loop though our trials!
+        while (trialsRemaining > 0) {
+            // select random exemplars for this block of labels
+            var randomExemplars = [];
+            var randomVariants = [];
+            for (exemplarNum=0; exemplarNum < stimuli.exemplars_per_block; exemplarNum++) {
+                randomExemplars[exemplarNum] = randomNumberFrom(1,stimuli.exemplars);
+                randomVariants[exemplarNum] = randomNumberFrom(1,stimuli.quantity);
+            }
+            // loop through labels
+            var tmpExemplars = [];
+            var tmpStimuli = [];
+            var tmpVariants = [];
+            for (stimNum=0; stimNum < stimuli.labels.length; stimNum++) {
+                // concatenate our randomExemplars for each stimulus category
+                tmpExemplars = tmpExemplars.concat(randomExemplars);
 
-        // get an equivalent array so we know what stimuli these exemplars belong to
-        tmpStimuli = tmpStimuli.concat(Array(stimuli.exemplars_per_block).fill(stimNum));
+                // get an equivalent array so we know what stimuli these exemplars belong to
+                tmpStimuli = tmpStimuli.concat(Array(stimuli.exemplars_per_block).fill(stimNum));
 
-        // and concat our variants
-        tmpVariants = tmpVariants.concat(randomVariants);
+                // and concat our variants
+                tmpVariants = tmpVariants.concat(randomVariants);
 
-        // now we iterate our trials remaining
-        trialsRemaining = trialsRemaining-(1*stimuli.exemplars_per_block);
-    }
+                // now we iterate our trials remaining
+                trialsRemaining = trialsRemaining-(1*stimuli.exemplars_per_block);
+            }
 
-    shuffle(tmpStimuli,tmpExemplars,tmpVariants);
+            shuffle(tmpStimuli,tmpExemplars,tmpVariants);
 
-    stimuli.category_order = stimuli.category_order.concat(tmpStimuli);
-    stimuli.exemplar_order = stimuli.exemplar_order.concat(tmpExemplars);
-    stimuli.variant_order = stimuli.variant_order.concat(tmpVariants);
-}
+            stimuli.category_order = stimuli.category_order.concat(tmpStimuli);
+            stimuli.exemplar_order = stimuli.exemplar_order.concat(tmpExemplars);
+            stimuli.variant_order = stimuli.variant_order.concat(tmpVariants);
+        }
 
-                    //for (diff = 0; diff < stimulus_difficulty.valid.length; diff++) {
-                    //    diffMod = diff+1; // add one because js starts at 0
-                    //    repMod = rep+1; // add one because js starts at 0
-                    //    // generate these to preload the images
-                    //    stimuli.stimuli_paths = stimuli.stimuli_paths.concat(stimulusPathFactory(stimuli.labels[i],exemplarMod.toString(),repMod.toString(),diffMod.toString(),'stimulus'));
-                    //}
-        // we'll probably want to counterbalance:
-        // stimuli.prompt_order
-        // stimuli.category_order
+        // we're porbably going to want to preload images, so:
+        // https://www.jspsych.org/7.1/overview/media-preloading/#manual-preloading
+        //for (diff = 0; diff < stimulus_difficulty.valid.length; diff++) {
+        //    diffMod = diff+1; // add one because js starts at 0
+        //    repMod = rep+1; // add one because js starts at 0
+        //    // generate these to preload the images
+        //    stimuli.stimuli_paths = stimuli.stimuli_paths.concat(stimulusPathFactory(stimuli.labels[i],exemplarMod.toString(),repMod.toString(),diffMod.toString(),'stimulus'));
+        //}
 
         ////////////////////////////
         /* jsPsych trial settings */
