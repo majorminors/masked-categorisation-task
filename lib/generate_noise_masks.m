@@ -1,10 +1,13 @@
-function generate_noise_masks(rootDir)
+% function generate_noise_masks(rootDir)
+clc;
+clear all;
+close all;
 
-%clc;
-%clear all;
-%close all;
+rootDir = 'unmasked_datasets';
+inputExt = '.JPEG';
+outputExt = '.jpg';
 
-loop = 0;
+loop = 1;
 
 % some settings
 noise_spatial_freq=-1;% -1 =1/f; -2=1/f^2; ...
@@ -20,22 +23,26 @@ else
 end
 
 % loop through all sub directories
-for i = 1:length(allsubdirs)
+for dirNum = 1:length(allsubdirs)
     
     % get list of all files in sub dir i
-    dirContent = dir(allsubdirs{i});
+    dirContent = dir(allsubdirs{dirNum});
     dirFiles = {dirContent.name};
     
     % get just the image files
-    imgFilesIdx = ~cellfun(@isempty, regexp(dirFiles, '.jpg'));
+    imgFilesIdx = ~cellfun(@isempty, regexp(dirFiles, inputExt));
     
     % list the image files
     imgFiles = dirFiles(imgFilesIdx);
-    
+       
     % loop through all image files
-    for j = 1:length(imgFiles)
+    for imgNum = 1:length(imgFiles)
         
-        theFile = fullfile(allsubdirs{i}, imgFiles{j});
+        % make the current file easy to reference
+        theFile = fullfile(allsubdirs{dirNum}, imgFiles{imgNum});
+        
+        % collate these filenames so we can normalise them
+        if ~exist('allImgFiles','var'); allImgFiles = {theFile}; else allImgFiles = [allImgFiles, {theFile}]; end
         
         % get the file name (no path or extension)
         [~,imgName,~] = fileparts(theFile);
@@ -56,13 +63,39 @@ for i = 1:length(allsubdirs)
         % show the mask
         imshow(Noise_mask)
         
+        % collate the mean intensities so we can normalise them
+        mean_intensity =  mean(Noise_mask(:));
+        if ~exist('intensities','var'); intensities = mean_intensity; else intensities = [intensities, mean_intensity]; end
+        
         % write the mask
-        imwrite(Noise_mask,[imgName '.jpg']);
+        imwrite(Noise_mask,[allsubdirs{dirNum} filesep imgName outputExt]);
     end
 end
 
-return
+% get an overall mean intensity for all the images
+mean_intensity = mean(intensities);
+
+% then loop through and normalise them relative to the mean
+for imgNum = 1:size(allImgFiles,2)
+    
+    thisImgName = replace(allImgFiles{imgNum},inputExt,outputExt);
+    
+    thisImg = imread(thisImgName);
+    
+    intensity = intensities(imgNum);
+    
+    diff = mean_intensity - intensity;
+    
+    adjusted=uint8(thisImg+diff);
+    
+    imshow(adjusted);
+    
+    imwrite(adjusted, allImgFiles{imgNum});
+    
 end
+
+% return
+% end
 
 
 function x = spatialPattern(DIM,BETA)
@@ -132,6 +165,11 @@ x = ifft2(S_f.^0.5 .* (cos(2*pi*phi)+i*sin(2*pi*phi)));
 
 % Pick just the real component
 x = real(x);
+
+return
+end
+
+function normalise_masks()
 
 return
 end
