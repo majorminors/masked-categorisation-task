@@ -141,7 +141,9 @@
         var random_mask = {
             type: 'image-button-response',
             // stimulus: 'stimuli/mask_placeholder.png', // we generate this dynamically in the trial loop
+            stimulus_height: 500,
             choices: stimuli.labels.concat('none of these','not sure'),
+            margin_vertical: 4,
             prompt: "<p>Select Response</p>",
             stimulus_duration: mask_time,
             trial_duration: response_time,
@@ -154,6 +156,7 @@
             type: 'image-keyboard-response',
             choices: jsPsych.NO_KEYS,
             // stimulus: 'path/to/image', // we specify this dynamically in the trial loop
+            stimulus_height: 500,
             stimulus_duration: stimulus_display_time,
             trial_duration: stimulus_display_time+stimulus_blank_time,
             data: {experiment_part: 'presentation'} // we use this information to filter trials

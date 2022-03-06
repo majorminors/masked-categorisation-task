@@ -14,3 +14,9 @@ body {
     height: 50px;
     width: auto;
 }
+
+#jspsych-image-button-response-btngroup {
+    width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
