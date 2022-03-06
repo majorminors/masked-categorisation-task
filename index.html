@@ -66,7 +66,7 @@
             prompt_html_array: [] // generate this later
         };
         stimuli.accuracy = stimuli.labels.map( // new array mapped to the length of stimuli.labels
-            () => { return 50; } // with each value the return value of this function
+            () => { return stimulus_difficulty.accuracy; } // with each value the return value of this function
         ); // an accuracy for each stimulus to be set to chance and updated per trial
 
 
@@ -236,7 +236,8 @@
                             data.stimulus_variant = stimuli.variant_order[stimulus_index];
 
                             // adjust difficulty
-                            thisDifficulty = difficultyTitration(thisDifficulty);
+                            thisLabel = stimuli.labels[stimuli.category_order[stimulus_index]];
+                            thisDifficulty = difficultyTitration(thisDifficulty,thisLabel);
                         }
                     },
                 );
