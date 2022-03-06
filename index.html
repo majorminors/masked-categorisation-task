@@ -5,6 +5,7 @@
         <!-- pull in jsPsych resources -->
         <script src="jspsych-6.3.1/jspsych.js"></script>
         <script src="jspsych-6.3.1/plugins/jspsych-image-button-response.js"></script>
+        <script src="jspsych-6.3.1/plugins/jspsych-image-keyboard-response.js"></script>
         <script src="jspsych-6.3.1/plugins/jspsych-html-button-response.js"></script>
         <script src="jspsych-6.3.1/plugins/jspsych-html-keyboard-response.js"></script>
         <!-- pull in experiment resources -->
@@ -127,19 +128,20 @@
             type: 'image-button-response',
             // stimulus: 'stimuli/mask_placeholder.png', // we generate this dynamically in the trial loop
             choices: stimuli.labels.concat('none of these','not sure'),
+            prompt: "<p>Select Response</p>",
             stimulus_duration: mask_time,
             trial_duration: response_time,
             data: {experiment_part: 'response'} // we use this information to filter trials
         };
 
         var stimulus_presentation = {
-            type: 'image-button-response',
+            // if we have the response prompts here, it'll appear in the middle of the screen while the image loads
+            // so do image keyboard response
+            type: 'image-keyboard-response',
+            choices: jsPsych.NO_KEYS,
             // stimulus: 'path/to/image', // we specify this dynamically in the trial loop
-            choices: stimuli.labels.concat('none of these','not sure'),
-            // choices: ['array','of','html','or','text','to','display'], // we'll make these html images
             stimulus_duration: stimulus_display_time,
             trial_duration: stimulus_display_time+stimulus_blank_time,
-            prompt: "<p>Select Response</p>",
             data: {experiment_part: 'presentation'} // we use this information to filter trials
         };
 
