@@ -26,9 +26,9 @@
         ///////////////////
 
         var fixation_time = 200; // ms to display fixation
-        var stimulus_display_time = 50; // ms to display trial
-        var stimulus_blank_time = 30; // ms to display blank screen after stimulus
-        var mask_time = 80; // ms to display mask
+        var stimulus_display_time = 150; // ms to display trial
+        var stimulus_blank_time = 130; // ms to display blank screen after stimulus
+        var mask_time = 180; // ms to display mask
         var response_time = 2000; // max time for participant response
 
         var stimulus_difficulty = {
@@ -132,7 +132,7 @@
         // we'll reuse this as a fixation - shows a cross on the screen. can be changed
         var fixation = {
             type: 'html-keyboard-response',
-            stimulus: '<p style="font-size: 48px;">+</p>',
+            stimulus: '<div style="height: 250px"><p style="font-size: 48px;">+</p></div>',
             choices: jsPsych.NO_KEYS,
             trial_duration: fixation_time,
             data: {experiment_part: 'fixation'} // we use this information to filter trials
@@ -145,7 +145,6 @@
             choices: stimuli.labels.concat('none of these','not sure'),
             button_html: '<button class="jspsych-btn" style="width: 150px">%choice%</button>',
             margin_vertical: 4,
-            prompt: "<p>Select Response</p>",
             stimulus_duration: mask_time,
             trial_duration: response_time,
             data: {experiment_part: 'response'} // we use this information to filter trials
@@ -154,8 +153,10 @@
         var stimulus_presentation = {
             // if we have the response prompts here, it'll appear in the middle of the screen while the image loads
             // so do image keyboard response
-            type: 'image-keyboard-response',
-            choices: jsPsych.NO_KEYS,
+            type: 'image-button-response',
+            choices: stimuli.labels.concat('none of these','not sure'),
+            button_html: '<button class="jspsych-btn" style="width: 150px">%choice%</button>',
+            margin_vertical: 4,
             // stimulus: 'path/to/image', // we specify this dynamically in the trial loop
             stimulus_height: 500,
             stimulus_duration: stimulus_display_time,
