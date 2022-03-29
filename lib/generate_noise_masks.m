@@ -57,7 +57,7 @@ for dirNum = 1:length(allsubdirs)
         %mask_height=700;
         
         % get the noise mask
-        Noise_mask=spatialPattern([mask_width mask_height],noise_spatial_freq);
+        Noise_mask=spatialPattern([mask_height mask_width],noise_spatial_freq);
         Noise_mask=uint8(((Noise_mask-(min(min(Noise_mask))))./max(max(Noise_mask))).*noise_intensity);
         
         % show the mask
@@ -90,7 +90,7 @@ for imgNum = 1:size(allImgFiles,2)
     
     imshow(adjusted);
     
-    imwrite(adjusted, allImgFiles{imgNum});
+    imwrite(adjusted, thisImgName);
     
 end
 
@@ -169,7 +169,3 @@ x = real(x);
 return
 end
 
-function normalise_masks()
-
-return
-end
