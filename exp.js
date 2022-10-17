@@ -1,4 +1,10 @@
 // expects to be wrapped in an html file
+// note, we use some functions defined in lib/helperFunctions.js
+
+// when we put this into JATOS, we want to:
+// counterbalance the response prompts
+// select/randomise the categories
+// alter the exemplars and exemplars per block and the number of variants (stimuli.quantity)
 
 console.log("starting experiment");
 
@@ -61,20 +67,26 @@ stimuli.prompt_order = Array.from({length: stimuli.labels.length}, (e, i)=> i);
 
 // get total trials to loop through
 var trialsRemaining = stimuli.labels.length*stimuli.exemplars*stimuli.quantity;
-// alrighty, let's loop though our trials!
+
+// alrighty, let's loop though our trials to work out what our stimulus order will be
 while (trialsRemaining > 0) {
-    // select random exemplars for this block of labels
+
+    // first we'll select random `exemplars_per_block` number of exemplars (and random variants of those exemplars) for this block of labels
+    // so if we have 2 exemplars per block, we'll randomly select e.g. 2 of the 16 cars, and of those two, we'll select two bubble variants---one for each
     var randomExemplars = [];
     var randomVariants = [];
     for (exemplarNum=0; exemplarNum < stimuli.exemplars_per_block; exemplarNum++) {
         randomExemplars[exemplarNum] = randomNumberFrom(1,stimuli.exemplars);
         randomVariants[exemplarNum] = randomNumberFrom(1,stimuli.quantity);
     }
-    // loop through labels
+
+    // now we loop through labels/categories and map these random stimuli to each label
+    // the stimNum variable is the index for the labels
     var tmpExemplars = [];
     var tmpStimuli = [];
     var tmpVariants = [];
     for (stimNum=0; stimNum < stimuli.labels.length; stimNum++) {
+
         // concatenate our randomExemplars for each stimulus category
         tmpExemplars = tmpExemplars.concat(randomExemplars);
 
@@ -87,9 +99,16 @@ while (trialsRemaining > 0) {
         // now we iterate our trials remaining
         trialsRemaining = trialsRemaining-(1*stimuli.exemplars_per_block);
     }
+    // by the end of this, we'll have three variables:
+    //  tmpExemplars: trial by trial, what exemplar should we show?
+    //  tmpStimuli: trial by trial, what category will the exemplar be from? this is an index for the label, not the label itself
+    //  tmpVariants: trial by trial, what bubble variant for the exemplar should we show?
 
+    // now we have a nice order, but we want to shuffle them all up, so that we don't have one category after another
+    // this will shuffle all three of our variables in the exact same way
     shuffle(tmpStimuli,tmpExemplars,tmpVariants);
 
+    // now we put that shuffled order into the variable we'll use later to create our trials
     stimuli.category_order = stimuli.category_order.concat(tmpStimuli);
     stimuli.exemplar_order = stimuli.exemplar_order.concat(tmpExemplars);
     stimuli.variant_order = stimuli.variant_order.concat(tmpVariants);
@@ -110,6 +129,8 @@ while (trialsRemaining > 0) {
 
 console.log("generate trial settings");
 
+// first we just create our jsPsych 'trial' variables so we can use them later
+
 // we'll reuse this as a fixation - shows a cross on the screen. can be changed
 var fixation = {
     type: 'html-keyboard-response',
@@ -119,6 +140,7 @@ var fixation = {
     data: {experiment_part: 'fixation'} // we use this information to filter trials
 };
 
+// now we create the scaffold for our image random masks
 var random_mask = {
     type: 'image-button-response',
     // stimulus: 'stimuli/mask_placeholder.png', // we generate this dynamically in the trial loop
@@ -131,6 +153,7 @@ var random_mask = {
     data: {experiment_part: 'response'} // we use this information to filter trials
 };
 
+// now the scaffold for the actual stimulus presentation
 var stimulus_presentation = {
     // if we have the response prompts here, it'll appear in the middle of the screen while the image loads
     // so do image keyboard response
@@ -166,14 +189,14 @@ for (trial = 0; trial < stimuli.category_order.length; trial++) {
         timeline.push(
             {...fixation,
                 data: {...fixation.data,
-                    trial_num: trial
+                    trial_num: trial // make an index we can refer to in later trials if we need
                 }
             },
             {...stimulus_presentation,
                 stimulus: function() {
                     console.log('using default difficulty to establish baseline');
                     return getStimulus(
-                        jsPsych.data.get().last(1).values()[0].trial_num,
+                        jsPsych.data.get().last(1).values()[0].trial_num, // refer to that index we made earlier
                         stimulus_difficulty.default
                     );
                 },
@@ -181,13 +204,14 @@ for (trial = 0; trial < stimuli.category_order.length; trial++) {
             {...random_mask,
                 stimulus: function() {
                     return getMask(
-                        jsPsych.data.get().last(2).values()[0].trial_num
+                        jsPsych.data.get().last(2).values()[0].trial_num // refer to that index we made earlier 
                     );
                 },
                 on_finish: function(data) {
                     // code for correctness
                     var response = jsPsych.data.get().last(1).values()[0].response;
-                    var stimulus_index = jsPsych.data.get().last(3).values()[0].trial_num;
+                    var stimulus_index = jsPsych.data.get().last(3).values()[0].trial_num; // refer to that index we made earlier
+
                     if (stimuli.prompt_order[response] == stimuli.category_order[stimulus_index]) {
                         console.log('correct')
                         data.correct = true;
@@ -219,13 +243,13 @@ for (trial = 0; trial < stimuli.category_order.length; trial++) {
             {...random_mask,
                 stimulus: function() {
                     return getMask(
-                        jsPsych.data.get().last(2).values()[0].trial_num
+                        jsPsych.data.get().last(2).values()[0].trial_num // refer to that index we made earlier
                     );
                 },
                 on_finish: function(data) {
                     // code for correctness
                     var response = jsPsych.data.get().last(1).values()[0].response;
-                    var stimulus_index = jsPsych.data.get().last(3).values()[0].trial_num;
+                    var stimulus_index = jsPsych.data.get().last(3).values()[0].trial_num; // refer to that index we made earlier
                     if (stimuli.prompt_order[response] == stimuli.category_order[stimulus_index]) {
                         console.log('correct')
                         data.correct = true;
