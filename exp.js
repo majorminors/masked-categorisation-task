@@ -12,10 +12,13 @@ console.log("starting experiment");
 /* set up params */
 ///////////////////
 
+// trials go: fixation_time -> stimulus_display_time -> stimulus_blank_time -> mask_time -> response_time-mask_time
+//            fixation ------> stimulus --------------> nothing -------------> mask ------> nothing --------------|
+
 var fixation_time = 200 // ms to display fixation
 var stimulus_display_time = 150; // ms to display trial
 var stimulus_blank_time = 130; // ms to display blank screen after stimulus
-var mask_time = 180; // ms to display mask
+var mask_time = 180; // ms to display mask (at start of response period)
 var response_time = 2000; // max time for participant response
 
 var stimulus_difficulty = {
@@ -25,6 +28,8 @@ var stimulus_difficulty = {
     max: 5, // max stimulus difficulty (to limit titration from going too far up)
     accuracy: 50, // percentage difficulty to titrate to
     history: 4, // number of trials to check accuracy over
+    adaptive: true, // true (will titrate difficulty to `accuracy`) | false (will set difficulty to `order`)
+    order: [], // not coded
 };
 
 var stimuli = {
@@ -55,6 +60,9 @@ var stimuli = {
     prompt_html_array: [] // generate this later
 };
 
+// for settings file, just have this (minus the ones we don't code) and pass it into one of two files: one training (with additional training labels and training length), and one real---each takes in the stimuli and difficulty information and recodes them for their purposes
+// can break up these parts below into distinct chunks: trial pieces obviously one, trial inforamtion probably the difference maker, and the trial constructor too
+
 ////////////////////////////////
 /* generate trial information */
 ////////////////////////////////
@@ -67,6 +75,9 @@ stimuli.prompt_order = Array.from({length: stimuli.labels.length}, (e, i)=> i);
 
 // get total trials to loop through
 var trialsRemaining = stimuli.labels.length*stimuli.exemplars*stimuli.quantity;
+
+// we can divide trialsRemaining by the variables in stimulus_difficulty.order to determine how many trials allocated to each difficulty
+// then in the loop below, when trialsRemaining =< allocation, make stimulus difficulty x in that array.
 
 // alrighty, let's loop though our trials to work out what our stimulus order will be
 while (trialsRemaining > 0) {
@@ -168,6 +179,39 @@ var stimulus_presentation = {
     data: {experiment_part: 'presentation'} // we use this information to filter trials
 };
 
+// now create the catch trial
+var catch_trial = {
+    type: 'image-button-response',
+    choices: stimuli.labels.concat('yes','no'),
+    button_html: '<button class="jspsych-btn" style="width: 150px">%choice%</button>',
+    margin_vertical: 4,
+    stimulus: 'path/to/catch_trial_image.img', // we need to create this
+    stimulus_height: 500,
+    stimulus_duration: stimulus_display_time,
+    trial_duration: stimulus_display_time+stimulus_blank_time,
+    data: {experiment_part: 'catchTrial'} // we can use this information to filter trials
+    on_finish: function(data) {
+        var response = jsPsych.data.get().last(1).values()[0].response;
+        if (stimuli.prompt_order[response] == stimuli.category_order[stimulus_index]) {
+            // display a warning if incorrect!
+            // add incorrect to some counter
+            // if counter exceeds some value, then exit the study
+        }
+    }
+};
+
+// and create a break trial
+var break_trial = {
+    // if we have the response prompts here, it'll appear in the middle of the screen while the image loads
+    // so do image keyboard response
+    type: 'image-keyboard-response',
+    margin_vertical: 4,
+    // stimulus: 'path/to/image', // we specify this dynamically in the trial loop
+    stimulus_height: 500,
+    stimulus_duration: break_time,
+    trial_duration: break_time,
+    data: {experiment_part: 'break'} // we use this information to filter trials
+};
 
 ////////////////////////////
 /* experiment constructor */
@@ -184,7 +228,13 @@ var thisDifficulty = stimulus_difficulty.default;
 /* commence generating trials */
 
 for (trial = 0; trial < stimuli.category_order.length; trial++) {
-    if (trial < stimulus_difficulty.history) {
+    if (trial = catch_trials) {
+        timeline.push(catch_trial);
+    }
+    if (trial = break_trials) {
+        timeline.push(break_trial);
+    }
+    if (trial < stimulus_difficulty.history) { // and not stimulus_difficulty.adaptive
         // add enough trials to start checking history for accuracy
         timeline.push(
             {...fixation,
@@ -263,7 +313,7 @@ for (trial = 0; trial < stimuli.category_order.length; trial++) {
 
                     // adjust difficulty
                     thisLabel = stimuli.labels[stimuli.category_order[stimulus_index]];
-                    thisDifficulty = difficultyTitration(thisDifficulty,thisLabel);
+                    thisDifficulty = difficultyTitration(thisDifficulty,thisLabel); // if stimulus_difficulty.adaptive, then index into stimulus_difficulty.order
                 }
             },
         );
