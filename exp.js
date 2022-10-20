@@ -1,5 +1,15 @@
 // expects to be wrapped in an html file
 // note, we use some functions defined in lib/helperFunctions.js
+//
+// expects stimuli to be in `stimuli/masked_datasets/category/exemplar_number/difficulty_level/bubble_variant_number.jpg` where:
+//     difficulty_levels are matched to `stimulus_difficulty.valid` in settings
+//     bubble_variant_number is a number from 1-stimuli.quantity in settings
+//     exemplar_number is a number from 1-stimuli.exemplars in settings
+//     category matches stimuli.labels in settings
+// expects masks to be in `stimuli/masks/category/exemplar_number.jpg` where:
+//     category matches stimuli.labels in settings
+//     exemplar_number is a number from 1-stimuli.exemplars in settings
+//  expects the image to display during catch trials is at `stimuli.catch-trial.png`
 
 // when we put this into JATOS, we want to:
 // counterbalance the response prompts
