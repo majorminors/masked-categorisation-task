@@ -20,6 +20,14 @@ var stimulus_display_time = 150; // ms to display trial
 var stimulus_blank_time = 130; // ms to display blank screen after stimulus
 var mask_time = 180; // ms to display mask (at start of response period)
 var response_time = 2000; // max time for participant response
+var catch_trials = 20; // after how many trials should there be catch trials?
+var catch_trial_time = stimulus_display_time+100; // how long should we display the catch trial image?
+var catch_trial_feedback_time = response_time; // and how long to display feedback afterwards?
+var maxBadCatchTrials = 10; // how many bad catch trials should there be?
+
+// this will work, but will need adjusting (for example, should we tell the participants how long the break is for?)
+var break_trials = 0; // after how many trials should there be break trials?
+var break_time = 0; // and for how long?
 
 var stimulus_difficulty = {
     valid: [1,2,3,4,5], // valid stimulus difficulties, should correspond to folder names
@@ -180,37 +188,53 @@ var stimulus_presentation = {
 };
 
 // now create the catch trial
-var catch_trial = {
-    type: 'image-button-response',
-    choices: stimuli.labels.concat('yes','no'),
-    button_html: '<button class="jspsych-btn" style="width: 150px">%choice%</button>',
-    margin_vertical: 4,
-    stimulus: 'path/to/catch_trial_image.img', // we need to create this
-    stimulus_height: 500,
-    stimulus_duration: stimulus_display_time,
-    trial_duration: stimulus_display_time+stimulus_blank_time,
-    data: {experiment_part: 'catchTrial'} // we can use this information to filter trials
-    on_finish: function(data) {
-        var response = jsPsych.data.get().last(1).values()[0].response;
-        if (stimuli.prompt_order[response] == stimuli.category_order[stimulus_index]) {
-            // display a warning if incorrect!
-            // add incorrect to some counter
-            // if counter exceeds some value, then exit the study
+var badCatchTrials = 0;
+var catch_trial = [
+        {
+            type: 'image-button-response',
+            choices: ['no','yes', ...stimuli.labels],
+            button_html: '<button class="jspsych-btn" style="width: 150px">%choice%</button>',
+            margin_vertical: 4,
+            stimulus: 'stimuli/catch-trial.png', // we need to create this
+            stimulus_height: 500,
+            stimulus_duration: catch_trial_time,
+            trial_duration: response_time,
+            data: {experiment_part: 'catchTrial'} // we can use this information to filter trials
+        },
+        {
+            type: "html-keyboard-response",
+            stimulus: function() {
+                var response = jsPsych.data.get().last(1).values()[0].response;
+                if (response != 1) { // we assume yes inserted second, so it will be 1 as javascript starts at 0 when counting
+                    console.log('bad catch trial');
+                    badCatchTrials = badCatchTrials+1;
+                    if (badCatchTrials == maxBadCatchTrials) {
+                        jsPsych.data.addProperties({attention_failure: 1}); // let's add something so we can filter this dataset out later
+                        jsPsych.endExperiment('The experiment was ended: too many failed attention checks :)'); // don't know why jsPsych has text in there, it doesn't show
+                        document.body.innerHTML = 'The experiment was ended: too many failed attention checks :(';  // so let's add the text ourselves
+                    }
+                    return '<p>incorrect<br>'
+                        +JSON.stringify(badCatchTrials)
+                        +' failed attention checks of '
+                        +JSON.stringify(maxBadCatchTrials)
+                        +'<br>Please pay attention or we will not be able to continue!</p>';
+                } else { // else if false
+                    return "<p>correct!<br>thanks for paying attention.</p>";
+                }
+            },
+            choices: jsPsych.NO_KEYS,
+            trial_duration: catch_trial_feedback_time,
+            data: {experiment_part: 'catchTrial-feedback'}
         }
-    }
-};
+];
 
 // and create a break trial
 var break_trial = {
-    // if we have the response prompts here, it'll appear in the middle of the screen while the image loads
-    // so do image keyboard response
-    type: 'image-keyboard-response',
-    margin_vertical: 4,
-    // stimulus: 'path/to/image', // we specify this dynamically in the trial loop
-    stimulus_height: 500,
-    stimulus_duration: break_time,
+    type: "html-keyboard-response",
+    stimulus: '<p>Take a break!</p>',
+    choices: jsPsych.NO_KEYS,
     trial_duration: break_time,
-    data: {experiment_part: 'break'} // we use this information to filter trials
+    data: {experiment_part: 'break'}
 };
 
 ////////////////////////////
@@ -228,12 +252,19 @@ var thisDifficulty = stimulus_difficulty.default;
 /* commence generating trials */
 
 for (trial = 0; trial < stimuli.category_order.length; trial++) {
-    if (trial = catch_trials) {
-        timeline.push(catch_trial);
+    
+    // insert our catch and break trials if needed
+    if (catch_trials != 0 && trial != 0) {
+        if (trial % catch_trials === 0) {
+            timeline.push(...catch_trial); // we need to spread this, because it has two trials---the catch trial and the feedback trial
+        }
     }
-    if (trial = break_trials) {
-        timeline.push(break_trial);
+    if (break_trials != 0 && trial != 0) {
+        if (trial % break_trials === 0) {
+            timeline.push(break_trial);
+        }
     }
+
     if (trial < stimulus_difficulty.history) { // and not stimulus_difficulty.adaptive
         // add enough trials to start checking history for accuracy
         timeline.push(
