@@ -36,8 +36,8 @@ var stimulus_difficulty = {
     max: 5, // max stimulus difficulty (to limit titration from going too far up)
     accuracy: 50, // percentage difficulty to titrate to
     history: 4, // number of trials to check accuracy over
-    adaptive: true, // true (will titrate difficulty to `accuracy`) | false (will set difficulty to `order`)
-    order: [], // not coded
+    adaptive: false, // true (will titrate difficulty to `accuracy`) | false (will set difficulty to `order`)
+    order: [], // will repmat whatever values you put in here if stimulus_difficulty.adaptive is true, and if the result doesn't evenly fit the amount of trials, it will add however many trials are left of the 0th element (so e.g. if [1,2,3], will repmat [1,2,3,1,2,3...] and if the result doesn't fit the number of trials, it will finish up by adding as many 1s as it needs [...1,2,3,1,1]. You can repmat here with `repeatThings(array,repetitions)`.
 };
 
 var stimuli = {
@@ -83,6 +83,19 @@ stimuli.prompt_order = Array.from({length: stimuli.labels.length}, (e, i)=> i);
 
 // get total trials to loop through
 var trialsRemaining = stimuli.labels.length*stimuli.exemplars*stimuli.quantity;
+
+// now we make an order from stimulus_difficulty.order (if it exists)
+if (stimulus_difficulty.order) {
+    var theseSegments = Math.floor(trialsRemaining/stimulus_difficulty.order.length); // divide the trials evenly into as many segments there are difficulty orders
+    stimulus_difficulty.order = repeatThings(stimulus_difficulty.order,theseSegments);
+    if (stimulus_difficulty.order.length != trialsRemaining) {
+        var makeTheDifference = trialsRemaining-stimulus_difficulty.order.length;
+        console.log('adding ',makeTheDifference,' trials of ',stimulus_difficulty.order[0],' difficulty level to the end');
+        stimulus_difficulty.order.concat(repeatThings(stimulus_difficulty.order[0],makeTheDifference));
+        // this is not rigorously tested
+    }
+    console.log('stimulus difficulty order generated: ',stimulus_difficulty.order);
+}
 
 // we can divide trialsRemaining by the variables in stimulus_difficulty.order to determine how many trials allocated to each difficulty
 // then in the loop below, when trialsRemaining =< allocation, make stimulus difficulty x in that array.
@@ -265,7 +278,8 @@ for (trial = 0; trial < stimuli.category_order.length; trial++) {
         }
     }
 
-    if (trial < stimulus_difficulty.history) { // and not stimulus_difficulty.adaptive
+    // now check what kind of experimental trial to insert
+    if (trial < stimulus_difficulty.history && stimulus_difficulty.adaptive != true) {
         // add enough trials to start checking history for accuracy
         timeline.push(
             {...fixation,
@@ -344,7 +358,11 @@ for (trial = 0; trial < stimuli.category_order.length; trial++) {
 
                     // adjust difficulty
                     thisLabel = stimuli.labels[stimuli.category_order[stimulus_index]];
-                    thisDifficulty = difficultyTitration(thisDifficulty,thisLabel); // if stimulus_difficulty.adaptive, then index into stimulus_difficulty.order
+                    if (stimulus_difficulty.adaptive === true) {
+                        thisDifficulty = stimulus_difficulty.order[stimulus_index];
+                    } else {
+                        thisDifficulty = difficultyTitration(thisDifficulty,thisLabel);
+                    }
                 }
             },
         );
