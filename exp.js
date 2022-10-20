@@ -95,7 +95,7 @@ stimuli.prompt_order = Array.from({length: stimuli.labels.length}, (e, i)=> i);
 var trialsRemaining = stimuli.labels.length*stimuli.exemplars*stimuli.quantity;
 
 // now we make an order from stimulus_difficulty.order (if it exists)
-if (stimulus_difficulty.order) {
+if (stimulus_difficulty.adaptive === true) {
     var theseSegments = Math.floor(trialsRemaining/stimulus_difficulty.order.length); // divide the trials evenly into as many segments there are difficulty orders
     stimulus_difficulty.order = repeatThings(stimulus_difficulty.order,theseSegments);
     if (stimulus_difficulty.order.length != trialsRemaining) {
@@ -324,7 +324,8 @@ for (trial = 0; trial < stimuli.category_order.length; trial++) {
                         console.log('incorrect')
                         data.correct = false;
                     }
-                    data.response_label = stimuli.labels[stimuli.prompt_order[stimulus_index]];
+                    data.response_label = stimuli.labels[stimuli.prompt_order[response]];
+                    if(data.response_label === undefined){data.response_label = 'not sure or none of these'}
                     data.stimulus_label = stimuli.labels[stimuli.category_order[stimulus_index]];
                     data.stimulus_variant = stimuli.variant_order[stimulus_index];
                 }
@@ -362,7 +363,8 @@ for (trial = 0; trial < stimuli.category_order.length; trial++) {
                         console.log('incorrect')
                         data.correct = false;
                     }
-                    data.response_label = stimuli.labels[stimuli.prompt_order[stimulus_index]];
+                    data.response_label = stimuli.labels[stimuli.prompt_order[response]];
+                    if(data.response_label === undefined){data.response_label = 'not sure or none of these'}
                     data.stimulus_label = stimuli.labels[stimuli.category_order[stimulus_index]];
                     data.stimulus_variant = stimuli.variant_order[stimulus_index];
 
