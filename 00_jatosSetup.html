@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Masked Categorisation Task</title>
+    	<meta charset="utf-8"/>
+        <!-- pull in JATOS resources -->
+        <script src="/assets/javascripts/jatos.js"></script>
+        <style></style>
+    </head>
+    <body></body>
+    <script>
+
+        console.log("selecting conditions");
+        
+        // so here, we could generate conditions to distribute response prompts into, if we wanted.
+
+        jatos.onLoad(function() {
+
+            // get the prolific ID if there is one
+            if (jatos.urlQueryParameters.hasOwnProperty('PROLIFIC_PID')) {
+                jatos.studySessionData["app_identifier_string"] = jatos.urlQueryParameters.PROLIFIC_PID;
+            } else {
+                jatos.studySessionData["app_identifier_string"] = 'none_set';
+            }
+
+            var thisSessionData = jatos.studySessionData;
+            var resultJson = {...thisSessionData};
+            jatos.submitResultData(resultJson, jatos.startNextComponent);
+
+        });
+    </script>
+</html>
