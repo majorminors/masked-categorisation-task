@@ -18,6 +18,7 @@ jatos.onLoad(function() {
     jatos.studySessionData["stimulus_blank_time"] = 130; // ms to display blank screen after stimulus
     jatos.studySessionData["mask_time"] = 180; // ms to display mask (at start of response period)
     jatos.studySessionData["response_time"] = 2000; // max time for participant response
+    jatos.studySessionData["training_correct"] = 20; // after how many correct trials should training finish?
     jatos.studySessionData["catch_trials"] = 20; // after how many trials should there be catch trials?
     jatos.studySessionData["catch_trial_time"] = 300; // how long should we display the catch trial image?
     jatos.studySessionData["catch_trial_feedback_time"] = 2000; // and how long to display feedback afterwards?
@@ -30,6 +31,7 @@ jatos.onLoad(function() {
     jatos.studySessionData["stimulus_difficulty"] = {
         valid: [1,2,3,4,5], // valid stimulus difficulties, should correspond to folder names
         default: 3, // default stim difficulty (used for first trials to establish accuracy)
+        training: 5, // what stim difficulty to use during training
         min: 1, // min stimulus difficulty (to limit titration from going too far down)
         max: 5, // max stimulus difficulty (to limit titration from going too far up)
         accuracy: 50, // percentage difficulty to titrate to
@@ -60,8 +62,29 @@ jatos.onLoad(function() {
 
 
     // timeline on/off switches
-    jatos.studySessionData["consent_on"] = 1; // if 1 well get consent, and demographics
+    jatos.studySessionData["consent_on"] = 0; // if 1 well get consent, and demographics
     jatos.studySessionData["instructions_on"] = 1; // if 1, will do instructions
+
+
+    // subselect categories randomly, and apply the response conditions to them
+    var selector = randomNoRepeats(jatos.studySessionData["stimuli"].labels); // quick anon function to grab items randomly with no repeats
+    var newLabels = [];
+    for (thisLabel = 0; thisLabel < jatos.studySessionData.num_categories; thisLabel++) {
+        newLabels[thisLabel] = selector(); // run the anon function as many times as we have categories
+    }
+    var trainLabels = [];
+    for (thisLabel = 0; thisLabel < jatos.studySessionData.num_categories; thisLabel++) {
+        trainLabels[thisLabel] = selector(); // and create some training labels that will be different from our newLabels
+        console.log('this while loop will continue until training and stimulus labels do not overlap---an endless loop will occur if trainLabels.count + newLabels.count > num_categories')
+        while (newLabels.includes(trainLabels[thisLabel])) {
+            trainLabels[thisLabel] = selector(); // do it until they don't overlap
+        }
+    }
+    jatos.studySessionData["stimuli"].labels = newLabels;
+    jatos.studySessionData["stimuli"].trainLabels = trainLabels;
+    jatos.studySessionData["stimuli"].labels.sort(); // then resort to alphabetical
+    // now arrange those according to our response_condition mapping
+    jatos.studySessionData["stimuli"].labels = jatos.studySessionData["response_condition"].map(i => jatos.studySessionData["stimuli"].labels[i]);
 
     // let's get some consent!
 
