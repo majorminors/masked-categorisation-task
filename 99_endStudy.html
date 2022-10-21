@@ -1,0 +1,56 @@
+<html>
+    <head>
+        <title>Masked Categorisation Done!</title>
+    	<meta charset="utf-8"/>
+        <!-- pull in JATOS resources -->
+        <script src="jatos.js"></script>
+        <!-- pull in jsPsych resources -->
+        <script src="jspsych-6.1.0/jspsych.js"></script>
+        <script src="jspsych-6.1.0/plugins/jspsych-html-keyboard-response.js"></script>
+        <!-- some additional styling to make the background black -->
+        <link href="lib/exp.css" rel="stylesheet" type="text/css"></link>
+        <style></style>
+    </head>
+    <body></body>
+    <script>
+
+        // for debriefing and redirecting to e.g. Prolific
+
+        var redirect_link = 'https://app.prolific.co/submissions/complete?cc=18112FFE';
+
+        var debrief_html = "<p>All done!<br><br>Thanks so much for participating.<br>Feel free to email me if you'd like to know more about what the study was exploring.<br>dorian.minors@mrc-cbu.cam.ac.uk<br><br>Press any key to finish and please wait to be redirected to Prolific.</p>";
+
+        jatos.onLoad(function() {
+
+            /* initialise timeline array */
+
+            var timeline = [];
+
+            var redirection_screen = {
+                type: "html-keyboard-response",
+                stimulus: debrief_html,
+            }
+            timeline.push(redirection_screen);
+
+
+            jsPsych.init({
+                timeline: timeline,
+                on_finish: function() {
+                    var time = jsPsych.totalTime();
+                    jsPsych.data.addProperties({
+                        expt_duration: time,
+                    });
+                    var thisSessionData = jatos.studySessionData;
+                    var thisExpData = JSON.parse(jsPsych.data.get().json());
+                    var resultJson = {...thisSessionData, ...thisExpData};
+                    jatos.submitResultData(resultJson)
+                    .then(jatos.endStudyAjax)
+                    .then(() => {
+                        window.location.href = redirect_link
+                    });
+                }
+            });
+        });
+
+    </script>
+</html>
