@@ -14,15 +14,15 @@ jatos.onLoad(function() {
     console.log("starting experiment");
 
     // pull out our settings from jatos.studySessionData
-    var fixation_time = jatos.studySessionData["fixation_time"] = 200; // ms to display fixation
-    var stimulus_display_time = jatos.studySessionData["stimulus_display_time"] = 150; // ms to display trial
-    var stimulus_blank_time = jatos.studySessionData["stimulus_blank_time"] = 130; // ms to display blank screen after stimulus
-    var mask_time = jatos.studySessionData["mask_time"] = 180; // ms to display mask (at start of response period)
-    var response_time = jatos.studySessionData["response_time"] = 2000; // max time for participant response
-    var catch_trials = jatos.studySessionData["catch_trials"] = 20; // after how many trials should there be catch trials?
-    var catch_trial_time = jatos.studySessionData["catch_trial_time"] = stimulus_display_time+100; // how long should we display the catch trial image?
-    var catch_trial_feedback_time = jatos.studySessionData["catch_trial_feedback_time"] = response_time; // and how long to display feedback afterwards?
-    var maxBadCatchTrials = jatos.studySessionData["maxBadCatchTrials"] = 10; // how many bad catch trials should there be?
+    var fixation_time = jatos.studySessionData["fixation_time"]; // ms to display fixation
+    var stimulus_display_time = jatos.studySessionData["stimulus_display_time"]; // ms to display trial
+    var stimulus_blank_time = jatos.studySessionData["stimulus_blank_time"]; // ms to display blank screen after stimulus
+    var mask_time = jatos.studySessionData["mask_time"]; // ms to display mask (at start of response period)
+    var response_time = jatos.studySessionData["response_time"]; // max time for participant response
+    var catch_trials = jatos.studySessionData["catch_trials"]; // after how many trials should there be catch trials?
+    var catch_trial_time = jatos.studySessionData["catch_trial_time"]; // how long should we display the catch trial image?
+    var catch_trial_feedback_time = jatos.studySessionData["catch_trial_feedback_time"]; // and how long to display feedback afterwards?
+    var maxBadCatchTrials = jatos.studySessionData["maxBadCatchTrials"]; // how many bad catch trials should there be?
 
     // this will work, but will need adjusting (for example, should we tell the participants how long the break is for?)
     var break_trials = jatos.studySessionData["break_trials"] = 0; // after how many trials should there be break trials?
@@ -31,14 +31,14 @@ jatos.onLoad(function() {
     var stimulus_difficulty = jatos.studySessionData["stimulus_difficulty"];
 
     var stimuli = jatos.studySessionData["stimuli"];
-    stimuli.category_order: [], // we'll generate this later
-    stimuli.variant_order: [], // generate later
-    stimuli.exemplar_order: [], //generate this later
-    stimuli.stimuli_paths: [], // generate this later for preloading images
-    stimuli.mask_paths: [], // generate for later
-    stimuli.prompt_paths:  [], // generate this later for preloading images
-    stimuli.prompt_order: [], // generate this later
-    stimuli.prompt_html_array: [] // generate this later
+    stimuli.category_order = []; // we'll generate this later
+    stimuli.variant_order = []; // generate later
+    stimuli.exemplar_order = []; //generate this later
+    stimuli.stimuli_paths = []; // generate this later for preloading images
+    stimuli.mask_paths = []; // generate for later
+    stimuli.prompt_paths = []; // generate this later for preloading images
+    stimuli.prompt_order = []; // generate this later
+    stimuli.prompt_html_array = [];// generate this later
 
     ////////////////////////////////
     /* generate trial information */
@@ -46,14 +46,14 @@ jatos.onLoad(function() {
 
     console.log("generate trial information");
 
-    // counterbalance this when we move it into JATOS and can do batch control
+    // this is balanced by jatos now, so we can leave this here
     stimuli.prompt_order = Array.from({length: stimuli.labels.length}, (e, i)=> i);
 
     // get total trials to loop through
     var trialsRemaining = stimuli.labels.length*stimuli.exemplars*stimuli.quantity;
 
     // now we make an order from stimulus_difficulty.order (if it exists)
-    if (stimulus_difficulty.adaptive === true) {
+    if (stimulus_difficulty.adaptive === false) {
         var theseSegments = Math.floor(trialsRemaining/stimulus_difficulty.order.length); // divide the trials evenly into as many segments there are difficulty orders
         stimulus_difficulty.order = repeatThings(stimulus_difficulty.order,theseSegments);
         if (stimulus_difficulty.order.length != trialsRemaining) {
@@ -124,6 +124,99 @@ jatos.onLoad(function() {
     // preload_images: [stimuli.stimuli_paths, stimuli.prompt_paths, stimuli.mask_paths],
 
     ////////////////////////////
+    /* jsPsych trial settings */
+    ////////////////////////////
+    
+// we'll reuse this as a fixation - shows a cross on the screen. can be changed
+var fixation = {
+    type: 'html-keyboard-response',
+    stimulus: '<div style="height: 250px"><p style="font-size: 48px;">+</p></div>',
+    choices: jsPsych.NO_KEYS,
+    trial_duration: fixation_time,
+    data: {experiment_part: 'fixation'} // we use this information to filter trials
+};
+
+var break_trial = {
+    type: "html-keyboard-response",
+    stimulus: '<p>Take a break!</p>',
+    choices: jsPsych.NO_KEYS,
+    trial_duration: break_time,
+    data: {experiment_part: 'break'}
+};
+
+    // the scaffold for the actual stimulus presentation
+    var stimulus_presentation = {
+        // if we have the response prompts here, it'll appear in the middle of the screen while the image loads
+        // so do image keyboard response
+        type: 'image-button-response',
+        choices: stimuli.labels.concat('none of these','not sure'),
+        button_html: '<button class="jspsych-btn" style="width: 150px">%choice%</button>',
+        margin_vertical: 4,
+        // stimulus: 'path/to/image', // we specify this dynamically in the trial loop
+        stimulus_height: 500,
+        stimulus_duration: stimulus_display_time,
+        trial_duration: stimulus_display_time+stimulus_blank_time,
+        data: {experiment_part: 'presentation'} // we use this information to filter trials
+    };
+
+    // the scaffold for our image random masks
+    var random_mask = {
+        type: 'image-button-response',
+        // stimulus: 'stimuli/mask_placeholder.png', // we generate this dynamically in the trial loop
+        stimulus_height: 500,
+        choices: stimuli.labels.concat('none of these','not sure'),
+        button_html: '<button class="jspsych-btn" style="width: 150px">%choice%</button>',
+        margin_vertical: 4,
+        stimulus_duration: mask_time,
+        trial_duration: response_time,
+        data: {experiment_part: 'response'} // we use this information to filter trials
+    };
+
+
+
+    // now create the catch trial
+    var badCatchTrials = 0;
+    var catch_trial = [
+            {
+                type: 'image-button-response',
+                choices: ['no','yes', ...stimuli.labels],
+                button_html: '<button class="jspsych-btn" style="width: 150px">%choice%</button>',
+                margin_vertical: 4,
+                stimulus: 'stimuli/catch-trial.png', // we need to create this
+                stimulus_height: 500,
+                stimulus_duration: catch_trial_time,
+                trial_duration: response_time,
+                data: {experiment_part: 'catchTrial'} // we can use this information to filter trials
+            },
+            {
+                type: "html-keyboard-response",
+                stimulus: function() {
+                    var response = jsPsych.data.get().last(1).values()[0].response;
+                    if (response != 1) { // we assume yes inserted second, so it will be 1 as javascript starts at 0 when counting
+                        console.log('bad catch trial');
+                        badCatchTrials = badCatchTrials+1;
+                        if (badCatchTrials == maxBadCatchTrials) {
+                            jsPsych.data.addProperties({attention_failure: 1}); // let's add something so we can filter this dataset out later
+                            jsPsych.endExperiment('The experiment was ended: too many failed attention checks :)'); // don't know why jsPsych has text in there, it doesn't show
+                            document.body.innerHTML = 'The experiment was ended: too many failed attention checks :(';  // so let's add the text ourselves
+                        }
+                        return '<p>incorrect<br>'
+                            +JSON.stringify(badCatchTrials)
+                            +' failed attention checks of '
+                            +JSON.stringify(maxBadCatchTrials)
+                            +'<br>Please pay attention or we will not be able to continue!</p>';
+                    } else { // else if false
+                        return "<p>correct!<br>thanks for paying attention.</p>";
+                    }
+                },
+                choices: jsPsych.NO_KEYS,
+                trial_duration: catch_trial_feedback_time,
+                data: {experiment_part: 'catchTrial-feedback'}
+            }
+    ];
+
+
+    ////////////////////////////
     /* experiment constructor */
     ////////////////////////////
 
@@ -136,6 +229,24 @@ jatos.onLoad(function() {
     var thisDifficulty = stimulus_difficulty.default;
 
     /* commence generating trials */
+
+    timeline.push(
+        {
+            type: 'html-keyboard-response',
+            stimulus: '<p>Great! Now lets do the task for real. Good luck!</p>',
+            choices: jsPsych.NO_KEYS,
+            trial_duration: 1000,
+            response_ends_trial: false
+        },
+        { // requires html stimulus entry in previous trial
+            type: 'html-keyboard-response',
+            stimulus: function() {
+                var last_stim = jsPsych.data.get().last(1).values()[0].stimulus;
+                var addcontinue = last_stim+'<p style="position: fixed; bottom: 0; left: 50%; transform: translate(-50%, -50%); margin: 0 auto;"><br>Press any key to continue</p>';
+                return addcontinue;
+            }
+        }
+    );
 
     for (trial = 0; trial < stimuli.category_order.length; trial++) {
         
@@ -165,14 +276,16 @@ jatos.onLoad(function() {
                         console.log('using default difficulty to establish baseline');
                         return getStimulus(
                             jsPsych.data.get().last(1).values()[0].trial_num, // refer to that index we made earlier
-                            stimulus_difficulty.default
+                            stimulus_difficulty.default,
+                            stimuli
                         );
                     },
                 },
                 {...random_mask,
                     stimulus: function() {
                         return getMask(
-                            jsPsych.data.get().last(2).values()[0].trial_num // refer to that index we made earlier 
+                            jsPsych.data.get().last(2).values()[0].trial_num,
+                            stimuli // refer to that index we made earlier 
                         );
                     },
                     on_finish: function(data) {
@@ -205,20 +318,24 @@ jatos.onLoad(function() {
                     stimulus: function() {
                         return getStimulus(
                             jsPsych.data.get().last(1).values()[0].trial_num, // use the index we specified in fixation
-                            thisDifficulty
+                            thisDifficulty,
+                            stimuli
                         );
                     },
                 },
                 {...random_mask,
                     stimulus: function() {
                         return getMask(
-                            jsPsych.data.get().last(2).values()[0].trial_num // refer to that index we made earlier
+                            jsPsych.data.get().last(2).values()[0].trial_num,
+                            stimuli // refer to that index we made earlier
                         );
                     },
                     on_finish: function(data) {
                         // code for correctness
                         var response = jsPsych.data.get().last(1).values()[0].response;
                         var stimulus_index = jsPsych.data.get().last(3).values()[0].trial_num; // refer to that index we made earlier
+
+                        // do response-type specific coding
                         if (stimuli.prompt_order[response] == stimuli.category_order[stimulus_index]) {
                             console.log('correct')
                             data.correct = true;
@@ -227,16 +344,19 @@ jatos.onLoad(function() {
                             data.correct = false;
                         }
                         data.response_label = stimuli.labels[stimuli.prompt_order[response]];
-                        if(data.response_label === undefined){data.response_label = 'not sure or none of these'}
+                        if (data.response_label === undefined) {
+                            data.response_label = 'not sure or none of these'
+                        }
+
                         data.stimulus_label = stimuli.labels[stimuli.category_order[stimulus_index]];
                         data.stimulus_variant = stimuli.variant_order[stimulus_index];
 
                         // adjust difficulty
                         thisLabel = stimuli.labels[stimuli.category_order[stimulus_index]];
-                        if (stimulus_difficulty.adaptive === true) {
+                        if (stimulus_difficulty.adaptive === false) {
                             thisDifficulty = stimulus_difficulty.order[stimulus_index];
                         } else {
-                            thisDifficulty = difficultyTitration(thisDifficulty,thisLabel);
+                            thisDifficulty = difficultyTitration(thisDifficulty,thisLabel,stimulus_difficulty);
                         }
                     }
                 },
