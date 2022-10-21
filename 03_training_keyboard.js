@@ -153,7 +153,7 @@ jatos.onLoad(function() {
     timeline.push(
         {
             type: 'html-keyboard-response',
-            stimulus: '<p>Ok! Lets do some practice. You need to get '+JSON.stringify(jatos.studySessionData["training_correct"])+' correct to continue</p>',
+            stimulus: '<p>Ok! Lets do some practice. You need to get '+JSON.stringify(jatos.studySessionData["training_correct"])+' correct to continue.</p>',
             choices: jsPsych.NO_KEYS,
             trial_duration: 1000,
             response_ends_trial: false

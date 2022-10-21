@@ -34,7 +34,7 @@ jatos.onLoad(function() {
             instruction_resp,
         ]
     }
-    if (jatos.studySessionData["instructions_on"] === 1) {
+    if (jatos.studySessionData["instructions_on"] == 1) {
         timeline.push(instructions);
     } else {
         timeline.push(
