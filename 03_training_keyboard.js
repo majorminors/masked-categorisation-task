@@ -219,7 +219,7 @@ jatos.onLoad(function() {
                             console.log('incorrect')
                             data.correct = false;
                         }
-                        data.response_label = stimuli.labels[stimuli.prompt_order[response]];
+                        data.response_label = stimuli.labels[theseKeys.indexOf(response)];
                         if (data.response_label === undefined) {
                             data.response_label = 'not sure or none of these'
                         }
