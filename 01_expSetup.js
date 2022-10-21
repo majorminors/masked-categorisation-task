@@ -63,7 +63,8 @@ jatos.onLoad(function() {
 
     // timeline on/off switches
     jatos.studySessionData["consent_on"] = 0; // if 1 well get consent, and demographics
-    jatos.studySessionData["instructions_on"] = 1; // if 1, will do instructions
+    jatos.studySessionData["jnstructions_on"] = 1; // if 1, will do instructions
+    jatos.studySessionData["training_on"] = 0; // if 1 will do training
 
 
     // subselect categories randomly, and apply the response conditions to them
