@@ -28,6 +28,10 @@ jatos.onLoad(function() {
     jatos.studySessionData["break_trials"] = 0; // after how many trials should there be break trials?
     jatos.studySessionData["break_time"] = 0; // and for how long?
 
+    jatos.studySessionData["keys"] = ['a','s','d','f']; // what keys if the keyboard option?
+    if (jatos.studySessionData["keys"].length != jatos.studySessionData["num_categories"]) {throw 'keys and categories dont match!';}
+    jatos.studySessionData["keys_other"] = ['k','l']; // what other keys if the keyboard option? (i.e. not sure, none of these)
+
     jatos.studySessionData["stimulus_difficulty"] = {
         valid: [1,2,3,4,5], // valid stimulus difficulties, should correspond to folder names
         default: 3, // default stim difficulty (used for first trials to establish accuracy)
@@ -64,7 +68,7 @@ jatos.onLoad(function() {
     // timeline on/off switches
     jatos.studySessionData["consent_on"] = 0; // if 1 well get consent, and demographics
     jatos.studySessionData["jnstructions_on"] = 1; // if 1, will do instructions
-    jatos.studySessionData["training_on"] = 0; // if 1 will do training
+    jatos.studySessionData["training_on"] = 1; // if 1 will do training
 
 
     // subselect categories randomly, and apply the response conditions to them
