@@ -58,7 +58,7 @@ jatos.onLoad(function() {
             'sewing_machine',
             'violin',
         ],
-        exemplars: 16, // quantity of exemplars of each category
+        exemplars: 3, // quantity of exemplars of each category
         exemplars_per_block: 2, // number of exemplars to include in each block
         quantity: 100, // quantity of variants of each image exemplar
     };
