@@ -73,7 +73,7 @@ jatos.onLoad(function() {
         var randomExemplars = [];
         var randomVariants = [];
         for (exemplarNum=0; exemplarNum < stimuli.exemplars_per_block; exemplarNum++) {
-            randomExemplars[exemplarNum] = randomNumberFrom(1,stimuli.exemplars);
+            randomExemplars[exemplarNum] = stimuli.exemplars_used[Math.floor(Math.random() * stimuli.exemplars_used.length)];
             randomVariants[exemplarNum] = randomNumberFrom(1,stimuli.quantity);
         }
 
