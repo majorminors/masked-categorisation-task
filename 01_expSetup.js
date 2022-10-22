@@ -58,7 +58,8 @@ jatos.onLoad(function() {
             'sewing_machine',
             'violin',
         ],
-        exemplars: 3, // quantity of exemplars of each category
+        exemplars: 16, // quantity of exemplars of each category
+        exemplars_to_use: 3, // how many of these to use experiment-wide
         exemplars_per_block: 2, // number of exemplars to include in each block
         quantity: 100, // quantity of variants of each image exemplar
     };
@@ -95,6 +96,15 @@ jatos.onLoad(function() {
     jatos.studySessionData["stimuli"].labels.sort(); // then resort to alphabetical
     // now arrange those according to our response_condition mapping
     jatos.studySessionData["stimuli"].labels = jatos.studySessionData["response_condition"].map(i => jatos.studySessionData["stimuli"].labels[i]);
+
+    // now let's randomly select our exemplars
+        var randomExemplars = [];
+        var selector = randomNoRepeats(Array.from({length: jatos.studySessionData["stimuli"].exemplars}, (_, i) => i + 1))
+    for (exemplarNum=0; exemplarNum < jatos.studySessionData["stimuli"].exemplars_to_use; exemplarNum++) {
+        randomExemplars[exemplarNum] = selector();
+    }
+    jatos.studySessionData["stimuli"].exemplars_used = randomExemplars;
+    console.log(jatos.studySessionData["stimuli"].exemplars_used)
 
     // let's get some consent!
 

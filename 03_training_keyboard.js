@@ -17,7 +17,8 @@ jatos.onLoad(function() {
 
     ///////////////////////////////////////////////
     /* replace stimulus labels with train labels */
-    stimuli.labels = stimuli.trainLabels;
+// THIS IS NOT WORKING! CHANGES EVERY `stimuli` including the studySessionData one!
+//    stimuli.labels = stimuli.trainLabels;
     /* different from exp.js                     */
     ///////////////////////////////////////////////
 
@@ -57,7 +58,7 @@ jatos.onLoad(function() {
         var randomExemplars = [];
         var randomVariants = [];
         for (exemplarNum=0; exemplarNum < stimuli.exemplars_per_block; exemplarNum++) {
-            randomExemplars[exemplarNum] = randomNumberFrom(1,stimuli.exemplars);
+            randomExemplars[exemplarNum] = stimuli.exemplars_used[Math.floor(Math.random() * stimuli.exemplars_used.length)];
             randomVariants[exemplarNum] = randomNumberFrom(1,stimuli.quantity);
         }
 

@@ -17,7 +17,8 @@ jatos.onLoad(function() {
 
     ///////////////////////////////////////////////
     /* replace stimulus labels with train labels */
-    stimuli.labels = stimuli.trainLabels;
+// THIS IS NOT WORKING! CHANGES EVERY `stimuli` including the studySessionData one!
+//    stimuli.labels = stimuli.trainLabels;
     /* different from exp.js                     */
     ///////////////////////////////////////////////
 
@@ -29,14 +30,14 @@ jatos.onLoad(function() {
     stimuli.prompt_paths = []; // generate this later for preloading images
     stimuli.prompt_order = []; // generate this later
     stimuli.prompt_html_array = [];// generate this later
-
+    
     console.log("generate trial information");
 
     // this is balanced by jatos now, so we can leave this here
     stimuli.prompt_order = Array.from({length: stimuli.labels.length}, (e, i)=> i);
 
     // get total trials to loop through
-    var trialsRemaining = stimuli.labels.length*stimuli.exemplars*stimuli.quantity;
+    var trialsRemaining = stimuli.labels.length*stimuli.exemplars_to_use*stimuli.quantity;
 
 
 
@@ -49,7 +50,7 @@ jatos.onLoad(function() {
         var randomExemplars = [];
         var randomVariants = [];
         for (exemplarNum=0; exemplarNum < stimuli.exemplars_per_block; exemplarNum++) {
-            randomExemplars[exemplarNum] = randomNumberFrom(1,stimuli.exemplars);
+            randomExemplars[exemplarNum] = stimuli.exemplars_used[Math.floor(Math.random() * stimuli.exemplars_used.length)];
             randomVariants[exemplarNum] = randomNumberFrom(1,stimuli.quantity);
         }
 
