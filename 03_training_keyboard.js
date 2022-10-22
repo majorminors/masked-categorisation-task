@@ -228,12 +228,16 @@ jatos.onLoad(function() {
                         data.stimulus_label = stimuli.labels[stimuli.category_order[stimulus_index]];
                         data.stimulus_variant = stimuli.variant_order[stimulus_index];
 
+                        ////////////////////////////////////////
+                        /* adjust our training countertrials */
                         if (data.correct === true) {
                             trainingCounter++;
                         }
                         if (trainingCounter >= jatos.studySessionData["training_correct"]) {
                             jsPsych.endExperiment('training correct achieved');
                         }
+                        /* different from exp.js              */
+                        ////////////////////////////////////////
 
                     }
                 },

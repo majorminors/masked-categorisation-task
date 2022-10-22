@@ -13,24 +13,23 @@ jatos.onLoad(function() {
     // trials go: fixation_time -> stimulus_display_time -> stimulus_blank_time -> mask_time -> response_time-mask_time
     //            fixation ------> stimulus --------------> nothing -------------> mask ------> nothing --------------|
 
-    jatos.studySessionData["fixation_time"] = 200; // ms to display fixation
-    jatos.studySessionData["stimulus_display_time"] = 150; // ms to display trial
-    jatos.studySessionData["stimulus_blank_time"] = 130; // ms to display blank screen after stimulus
-    jatos.studySessionData["mask_time"] = 180; // ms to display mask (at start of response period)
-    jatos.studySessionData["response_time"] = 2000; // max time for participant response
-    jatos.studySessionData["training_correct"] = 20; // after how many correct trials should training finish?
-    jatos.studySessionData["catch_trials"] = 20; // after how many trials should there be catch trials?
-    jatos.studySessionData["catch_trial_time"] = 300; // how long should we display the catch trial image?
+    jatos.studySessionData["fixation_time"]             = 200; // ms to display fixation
+    jatos.studySessionData["stimulus_display_time"]     = 150; // ms to display trial
+    jatos.studySessionData["stimulus_blank_time"]       = 130; // ms to display blank screen after stimulus
+    jatos.studySessionData["mask_time"]                 = 180; // ms to display mask (at start of response period)
+    jatos.studySessionData["response_time"]             = 2000; // max time for participant response
+    jatos.studySessionData["training_correct"]          = 20; // after how many correct trials should training finish?
+    jatos.studySessionData["catch_trials"]              = 20; // after how many trials should there be catch trials?
+    jatos.studySessionData["catch_trial_time"]          = 300; // how long should we display the catch trial image?
     jatos.studySessionData["catch_trial_feedback_time"] = 2000; // and how long to display feedback afterwards?
-    jatos.studySessionData["maxBadCatchTrials"] = 10; // how many bad catch trials should there be?
+    jatos.studySessionData["maxBadCatchTrials"]         = 10; // how many bad catch trials should there be?
 
     // this will work, but will need adjusting (for example, should we tell the participants how long the break is for?)
     jatos.studySessionData["break_trials"] = 0; // after how many trials should there be break trials?
-    jatos.studySessionData["break_time"] = 0; // and for how long?
+    jatos.studySessionData["break_time"] = 0; // and for how long (ms)?
 
+    jatos.studySessionData["keys_other"] = ['k','l']; // what keys if the keyboard option for not sure, none of these?
     jatos.studySessionData["keys"] = ['a','s','d','f']; // what keys if the keyboard option?
-    if (jatos.studySessionData["keys"].length != jatos.studySessionData["num_categories"]) {throw 'keys and categories dont match!';}
-    jatos.studySessionData["keys_other"] = ['k','l']; // what other keys if the keyboard option? (i.e. not sure, none of these)
 
     jatos.studySessionData["stimulus_difficulty"] = {
         valid: [1,2,3,4,5], // valid stimulus difficulties, should correspond to folder names
@@ -70,6 +69,12 @@ jatos.onLoad(function() {
     jatos.studySessionData["instructions_on"] = 1; // if 1, will do instructions
     jatos.studySessionData["training_on"] = 1; // if 1 will do training
 
+    //////////////////
+    /* setup begins */
+    //////////////////
+
+    // little check that we have enough keys
+    if (jatos.studySessionData["keys"].length != jatos.studySessionData["num_categories"]) {throw 'keys and number of categories dont match!';}
 
     // subselect categories randomly, and apply the response conditions to them
     var selector = randomNoRepeats(jatos.studySessionData["stimuli"].labels); // quick anon function to grab items randomly with no repeats

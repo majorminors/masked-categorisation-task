@@ -17,7 +17,9 @@
         // here are variables that we need to distribute across participants
 
         var num_categories = 4; // categories determines response prompts, which are distributed
-	var num_participants = 100;
+	var num_participants = 100; // we will make at least this many workers available, which categories and response prompts will be distributed across
+
+        // probably don't mess with this stuff if you can help it
 
 	function permutator(inputArr) {
 	  var results = [];
