@@ -106,6 +106,22 @@ jatos.onLoad(function() {
     jatos.studySessionData["stimuli"].exemplars_used = randomExemplars;
     console.log(jatos.studySessionData["stimuli"].exemplars_used)
 
+    // let's preload
+    preloadPaths = [];
+    jatos.studySessionData["stimuli"].labels.forEach((thisCategory) => { // for the categories we're using
+        jatos.studySessionData["stimuli"].exemplars_used.forEach((thisExemplar) => { // for the exemplars we're using
+                    preloadPaths.push(stimulusPathFactory(thisCategory, thisExemplar, null, null, 'mask'));
+            for (variantNum=1; variantNum < jatos.studySessionData["stimuli"].quantity; variantNum++){ // for the variants we have
+                jatos.studySessionData["stimulus_difficulty"].valid.forEach((thisDifficulty) => { // for the valid difficulty levs
+                    // push the path to an array we can use to preload
+                    //console.log(stimulusPathFactory(thisCategory, thisExemplar, variantNum, thisDifficulty, 'stimulus'))
+                    preloadPaths.push(stimulusPathFactory(thisCategory, thisExemplar, variantNum, thisDifficulty, 'stimulus'));
+                });
+            }
+        });
+    });
+    jatos.studySessionData["stimuli"].preloadPaths = preloadPaths;
+
     // let's get some consent!
 
     /* initialise timeline array */

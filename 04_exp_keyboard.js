@@ -34,9 +34,7 @@ jatos.onLoad(function() {
     stimuli.category_order = []; // we'll generate this later
     stimuli.variant_order = []; // generate later
     stimuli.exemplar_order = []; //generate this later
-    stimuli.stimuli_paths = []; // generate this later for preloading images
     stimuli.mask_paths = []; // generate for later
-    stimuli.prompt_paths = []; // generate this later for preloading images
     stimuli.prompt_order = []; // generate this later
     stimuli.prompt_html_array = [];// generate this later
 
@@ -125,17 +123,6 @@ jatos.onLoad(function() {
         stimuli.variant_order = stimuli.variant_order.concat(tmpVariants);
     }
 
-
-    // we're probably going to want to preload images, so:
-    // https://www.jspsych.org/7.1/overview/media-preloading/#manual-preloading
-    //for (diff = 0; diff < stimulus_difficulty.valid.length; diff++) {
-    //    diffMod = diff+1; // add one because js starts at 0
-    //    repMod = rep+1; // add one because js starts at 0
-    //    // generate these to preload the images
-    //    stimuli.stimuli_paths = stimuli.stimuli_paths.concat(stimulusPathFactory(stimuli.labels[i],exemplarMod.toString(),repMod.toString(),diffMod.toString(),'stimulus'));
-    //}
-    // and add to the jsPsych init, under timeline
-    // preload_images: [stimuli.stimuli_paths, stimuli.prompt_paths, stimuli.mask_paths],
 
     ////////////////////////////
     /* jsPsych trial settings */
@@ -239,6 +226,13 @@ var break_trial = {
     /* initialise timeline array */
 
     var timeline = [];
+
+    timeline.push(
+        {
+            type: 'preload',
+            images: jatos.studySessionData["stimuli"].preloadPaths,
+        },
+    );
 
     var thisDifficulty = stimulus_difficulty.default;
 

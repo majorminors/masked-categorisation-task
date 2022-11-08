@@ -6,6 +6,13 @@ jatos.onLoad(function() {
 
     var timeline = [];
 
+//    timeline.push(
+//        {
+//            type: 'preload',
+//            images: jatos.studySessionData["stimuli"].preloadPaths,
+//        },
+//    );
+
     //////////////////
     /* instructions */
     //////////////////

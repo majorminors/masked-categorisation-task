@@ -25,9 +25,7 @@ jatos.onLoad(function() {
     stimuli.category_order = []; // we'll generate this later
     stimuli.variant_order = []; // generate later
     stimuli.exemplar_order = []; //generate this later
-    stimuli.stimuli_paths = []; // generate this later for preloading images
     stimuli.mask_paths = []; // generate for later
-    stimuli.prompt_paths = []; // generate this later for preloading images
     stimuli.prompt_order = []; // generate this later
     stimuli.prompt_html_array = [];// generate this later
 
@@ -143,6 +141,13 @@ jatos.onLoad(function() {
     /* initialise timeline array */
 
     var timeline = [];
+
+    timeline.push(
+        {
+            type: 'preload',
+            images: jatos.studySessionData["stimuli"].preloadPaths,
+        },
+    );
 
     ///////////////////////////////////////////////
     /* replace stimulus difficulty with training */
