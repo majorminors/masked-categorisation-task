@@ -106,7 +106,7 @@ jatos.onLoad(function() {
             instruction_resp,
             {
                 ...instruction_noresp,
-                stimulus: "<p>First you'll see an image, followed by a fuzzy version of the image.</p>"
+                stimulus: "<p>First you'll see an image, followed by a fuzzy version of the image.<br>Let me show you an example.</p>"
             },
             instruction_resp,
             fixation,
@@ -119,12 +119,12 @@ jatos.onLoad(function() {
             {
                 ...random_mask,
                 stimulus: function(){return stimulusPathFactory(instructionLabels[0], thisExemplar, null, null, 'mask')},
-                stimulus_duration: mask_time*trnTimeModifier,
-                trial_duration: mask_time*trnTimeModifier,
+                stimulus_duration: mask_time,
+                trial_duration: mask_time,
             },
             {
                 ...instruction_noresp,
-                stimulus: "<p>You have to identify what the image is by pressing the keys indicated at the bottom of the image.<br>Let's try an example.</p>"
+                stimulus: "<p>You have to identify what the image is by pressing the keys indicated at the bottom of the image.<br>Let's try that last image again now.</p>"
             },
             instruction_resp,
             fixation,
@@ -137,12 +137,12 @@ jatos.onLoad(function() {
             {
                 ...random_mask,
                 stimulus: function(){return stimulusPathFactory(instructionLabels[0], thisExemplar, null, null, 'mask')},
-                stimulus_duration: mask_time*trnTimeModifier,
+                stimulus_duration: mask_time,
                 trial_duration: response_time*2,
             },
             {
                 ...instruction_noresp,
-                stimulus: "<p>The correct answer there was"+JSON.stringify(instructionLabels[0])+".<br>Let's do another.</p>"
+                stimulus: "<p>The correct answer there was "+JSON.stringify(instructionLabels[0])+" which is key "+JSON.stringify(theseKeys[0])+".<br>Let's do another.</p>"
             },
             instruction_resp,
             fixation,
@@ -155,12 +155,12 @@ jatos.onLoad(function() {
             {
                 ...random_mask,
                 stimulus: function(){return stimulusPathFactory(instructionLabels[1], thisExemplar, null, null, 'mask')},
-                stimulus_duration: mask_time*trnTimeModifier,
+                stimulus_duration: mask_time,
                 trial_duration: response_time*2,
             },
             {
                 ...instruction_noresp,
-                stimulus: "<p>The correct answer there was"+JSON.stringify(instructionLabels[1])+".</p>"
+                stimulus: "<p>The correct answer there was "+JSON.stringify(instructionLabels[1])+" which is key "+JSON.stringify(theseKeys[1])+".</p>"
             },
             instruction_resp,
             {
@@ -178,12 +178,12 @@ jatos.onLoad(function() {
             {
                 ...random_mask,
                 stimulus: function(){return stimulusPathFactory(instructionLabels[2], thisExemplar, null, null, 'mask')},
-                stimulus_duration: mask_time*trnTimeModifier,
+                stimulus_duration: mask_time,
                 trial_duration: response_time*2,
             },
             {
                 ...instruction_noresp,
-                stimulus: "<p>The correct answer there was"+JSON.stringify(instructionLabels[2])+".</p>"
+                stimulus: "<p>The correct answer there was "+JSON.stringify(instructionLabels[2])+" which is key "+JSON.stringify(theseKeys[2])+".</p>"
             },
             instruction_resp,
             fixation,
@@ -196,12 +196,12 @@ jatos.onLoad(function() {
             {
                 ...random_mask,
                 stimulus: function(){return stimulusPathFactory(instructionLabels[2], thisExemplar, null, null, 'mask')},
-                stimulus_duration: mask_time*trnTimeModifier,
+                stimulus_duration: mask_time,
                 trial_duration: response_time*2,
             },
             {
                 ...instruction_noresp,
-                stimulus: "<p>The correct answer there was"+JSON.stringify(instructionLabels[2])+".</p>"
+                stimulus: "<p>The correct answer there was "+JSON.stringify(instructionLabels[2])+" which is key "+JSON.stringify(theseKeys[2])+".</p>"
             },
             instruction_resp,
             fixation,
@@ -214,12 +214,12 @@ jatos.onLoad(function() {
             {
                 ...random_mask,
                 stimulus: function(){return stimulusPathFactory(instructionLabels[0], thisExemplar, null, null, 'mask')},
-                stimulus_duration: mask_time*trnTimeModifier,
+                stimulus_duration: mask_time,
                 trial_duration: response_time*2,
             },
             {
                 ...instruction_noresp,
-                stimulus: "<p>The correct answer there was"+JSON.stringify(instructionLabels[0])+".</p>"
+                stimulus: "<p>The correct answer there was "+JSON.stringify(instructionLabels[0])+" which is key "+JSON.stringify(theseKeys[0])+".</p>"
             },
             instruction_resp,
             fixation,
@@ -232,12 +232,30 @@ jatos.onLoad(function() {
             {
                 ...random_mask,
                 stimulus: function(){return stimulusPathFactory(instructionLabels[1], thisExemplar, null, null, 'mask')},
-                stimulus_duration: mask_time*trnTimeModifier,
+                stimulus_duration: mask_time,
                 trial_duration: response_time*2,
             },
             {
                 ...instruction_noresp,
-                stimulus: "<p>The correct answer there was"+JSON.stringify(instructionLabels[1])+".</p>"
+                stimulus: "<p>The correct answer there was "+JSON.stringify(instructionLabels[1])+" which is key "+JSON.stringify(theseKeys[1])+".</p>"
+            },
+            instruction_resp,
+            fixation,
+            {
+               ...stimulus_presentation, 
+                stimulus: function(){return stimulusPathFactory(instructionLabels[3], thisExemplar, variant(), 5, 'stimulus')},
+                stimulus_duration: stimulus_display_time*trnTimeModifier,
+                trial_duration: stimulus_display_time+stimulus_blank_time*trnTimeModifier,
+            },
+            {
+                ...random_mask,
+                stimulus: function(){return stimulusPathFactory(instructionLabels[3], thisExemplar, null, null, 'mask')},
+                stimulus_duration: mask_time,
+                trial_duration: response_time*2,
+            },
+            {
+                ...instruction_noresp,
+                stimulus: "<p>The correct answer there was "+JSON.stringify(instructionLabels[3])+" which is key "+JSON.stringify(theseKeys[3])+".</p>"
             },
             instruction_resp,
             {
@@ -260,7 +278,7 @@ jatos.onLoad(function() {
             },
             {
                 ...instruction_noresp,
-                stimulus: "<p>The correct answer there was"+JSON.stringify(instructionLabels[1])+".</p>"
+                stimulus: "<p>The correct answer there was "+JSON.stringify(instructionLabels[1])+" which is key "+JSON.stringify(theseKeys[1])+".</p>"
             },
             instruction_resp,
             fixation,
@@ -278,7 +296,7 @@ jatos.onLoad(function() {
             },
             {
                 ...instruction_noresp,
-                stimulus: "<p>The correct answer there was"+JSON.stringify(instructionLabels[2])+".</p>"
+                stimulus: "<p>The correct answer there was "+JSON.stringify(instructionLabels[2])+" which is key "+JSON.stringify(theseKeys[2])+".</p>"
             },
             instruction_resp,
             fixation,
@@ -296,7 +314,7 @@ jatos.onLoad(function() {
             },
             {
                 ...instruction_noresp,
-                stimulus: "<p>The correct answer there was"+JSON.stringify(instructionLabels[1])+".</p>"
+                stimulus: "<p>The correct answer there was "+JSON.stringify(instructionLabels[1])+" which is key "+JSON.stringify(theseKeys[1])+".</p>"
             },
             instruction_resp,
             {
