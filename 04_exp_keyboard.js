@@ -56,7 +56,10 @@ jatos.onLoad(function() {
     var theseKeys = jatos.studySessionData["keys"].concat(jatos.studySessionData["keys_other"]);
     var thisPrompt = '<p>';
     for (promptIdx = 0; promptIdx < jatos.studySessionData["keys"].length; promptIdx++) {
-       thisPrompt = thisPrompt+JSON.stringify(jatos.studySessionData["keys"][promptIdx])+': '+JSON.stringify(stimuli.labels[promptIdx])+' ';
+       thisPrompt = thisPrompt+JSON.stringify(jatos.studySessionData["keys"][promptIdx])+': '+JSON.stringify(stimuli.labels[promptIdx]);
+        if (promptIdx < jatos.studySessionData["keys"].length-1){
+            thisPrompt = thisPrompt+'<span style="display: inline-block; margin-left: 40px;"></span>';
+        }
     }
     thisPrompt = thisPrompt+'<br>';
     thisPrompt = thisPrompt+JSON.stringify(jatos.studySessionData["keys_other"][0])+': not sure ';
