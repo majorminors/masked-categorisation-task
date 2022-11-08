@@ -144,6 +144,7 @@ jatos.onLoad(function() {
                 ...instruction_noresp,
                 stimulus: "<p>The correct answer there was"+JSON.stringify(instructionLabels[0])+".<br>Let's do another.</p>"
             },
+            instruction_resp,
             fixation,
             {
                ...stimulus_presentation, 
@@ -161,6 +162,7 @@ jatos.onLoad(function() {
                 ...instruction_noresp,
                 stimulus: "<p>The correct answer there was"+JSON.stringify(instructionLabels[1])+".</p>"
             },
+            instruction_resp,
             {
                 ...instruction_noresp,
                 stimulus: "<p>The images will be easier or harder to see. Here's some examples of what I mean.</p>"
@@ -183,6 +185,7 @@ jatos.onLoad(function() {
                 ...instruction_noresp,
                 stimulus: "<p>The correct answer there was"+JSON.stringify(instructionLabels[2])+".</p>"
             },
+            instruction_resp,
             fixation,
             {
                ...stimulus_presentation, 
@@ -200,6 +203,7 @@ jatos.onLoad(function() {
                 ...instruction_noresp,
                 stimulus: "<p>The correct answer there was"+JSON.stringify(instructionLabels[2])+".</p>"
             },
+            instruction_resp,
             fixation,
             {
                ...stimulus_presentation, 
@@ -217,6 +221,7 @@ jatos.onLoad(function() {
                 ...instruction_noresp,
                 stimulus: "<p>The correct answer there was"+JSON.stringify(instructionLabels[0])+".</p>"
             },
+            instruction_resp,
             fixation,
             {
                ...stimulus_presentation, 
@@ -234,6 +239,7 @@ jatos.onLoad(function() {
                 ...instruction_noresp,
                 stimulus: "<p>The correct answer there was"+JSON.stringify(instructionLabels[1])+".</p>"
             },
+            instruction_resp,
             {
                 ...instruction_noresp,
                 stimulus: "<p>Also, the images are actually presented much more quickly.<br>This is how fast it really goes.</p>"
@@ -256,6 +262,7 @@ jatos.onLoad(function() {
                 ...instruction_noresp,
                 stimulus: "<p>The correct answer there was"+JSON.stringify(instructionLabels[1])+".</p>"
             },
+            instruction_resp,
             fixation,
             {
                ...stimulus_presentation, 
@@ -273,6 +280,7 @@ jatos.onLoad(function() {
                 ...instruction_noresp,
                 stimulus: "<p>The correct answer there was"+JSON.stringify(instructionLabels[2])+".</p>"
             },
+            instruction_resp,
             fixation,
             {
                ...stimulus_presentation, 
@@ -290,6 +298,7 @@ jatos.onLoad(function() {
                 ...instruction_noresp,
                 stimulus: "<p>The correct answer there was"+JSON.stringify(instructionLabels[1])+".</p>"
             },
+            instruction_resp,
             {
                 ...instruction_noresp,
                 stimulus: "<p>That's it! See the image, then use the keyboard to tell me what you saw.<br>Please answer as fast as you can, but also try to be as accurate as you can.<br>Let's practice a bit!</p>"
