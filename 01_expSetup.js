@@ -47,7 +47,7 @@ jatos.onLoad(function() {
         labels: [ // should be equal to image category and category folder name, used as response prompt name also
             'car',
             'elephant',
-            'fish',
+            'goldfish',
             'hammer',
             'hand_blower',
             'hat',
@@ -61,7 +61,7 @@ jatos.onLoad(function() {
         exemplars: 16, // quantity of exemplars of each category
         exemplars_to_use: 3, // how many of these to use experiment-wide
         exemplars_per_block: 2, // number of exemplars to include in each block
-        quantity: 100, // quantity of variants of each image exemplar
+        quantity: 50, // quantity of variants of each image exemplar
     };
 
 
