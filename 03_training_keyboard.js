@@ -46,8 +46,9 @@ jatos.onLoad(function() {
             thisPrompt = thisPrompt+'<span style="display: inline-block; margin-left: 40px;"></span>';
         }
     }
-    thisPrompt = thisPrompt+'<br>';
-    thisPrompt = thisPrompt+JSON.stringify(jatos.studySessionData["keys_other"][0])+': not sure ';
+    thisPrompt = thisPrompt+'<br><br>';
+    thisPrompt = thisPrompt+JSON.stringify(jatos.studySessionData["keys_other"][0])+': not sure';
+    thisPrompt = thisPrompt+'<span style="display: inline-block; margin-left: 40px;"></span>';
     thisPrompt = thisPrompt+JSON.stringify(jatos.studySessionData["keys_other"][1])+': none of these</p>';
 
 
@@ -107,6 +108,14 @@ jatos.onLoad(function() {
         choices: jsPsych.NO_KEYS,
         trial_duration: fixation_time,
         data: {experiment_part: 'fixation'} // we use this information to filter trials
+    };
+
+    // feedback
+    var trnFeedback = {
+        type: 'html-keyboard-response',
+        choices: jsPsych.NO_KEYS,
+        trial_duration: fixation_time,
+        data: {experiment_part: 'trn_feedback'} // we use this information to filter trials
     };
 
     // the scaffold for the actual stimulus presentation
@@ -243,11 +252,21 @@ jatos.onLoad(function() {
                             trainingCounter++;
                         }
                         if (trainingCounter >= jatos.studySessionData["training_correct"]) {
-                            jsPsych.endExperiment('training correct achieved');
+                            jsPsych.endExperiment('correct training trials achieved');
                         }
                         /* different from exp.js              */
                         ////////////////////////////////////////
 
+                    }
+                },
+                {...trnFeedback,
+                    stimulus: function() {
+                        lastCorrect = jsPsych.data.get().last(1).values()[0].correct;
+                        if (lastCorrect == true) {
+                            return '<div style="height: 250px"><p style="font-size: 48px; color: green;">correct!</p></div>';
+                        } else {
+                            return '<div style="height: 250px"><p style="font-size: 48px; color: red;">incorrect!</p></div>';
+                        }
                     }
                 },
             );

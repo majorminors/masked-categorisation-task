@@ -59,8 +59,9 @@ jatos.onLoad(function() {
             thisPrompt = thisPrompt+'<span style="display: inline-block; margin-left: 40px;"></span>';
         }
     }
-    thisPrompt = thisPrompt+'<br>';
+    thisPrompt = thisPrompt+'<br><br>';
     thisPrompt = thisPrompt+JSON.stringify(jatos.studySessionData["keys_other"][0])+': not sure ';
+    thisPrompt = thisPrompt+'<span style="display: inline-block; margin-left: 40px;"></span>';
     thisPrompt = thisPrompt+JSON.stringify(jatos.studySessionData["keys_other"][1])+': none of these</p>';
 
 
