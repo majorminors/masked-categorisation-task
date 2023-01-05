@@ -13,35 +13,35 @@ jatos.onLoad(function() {
 
     var stimulus_difficulty = jatos.studySessionData["stimulus_difficulty"];
 
-    var stimuli = jatos.studySessionData["stimuli"];
+    var trnStimuli = jatos.studySessionData["stimuli"];
 
     ///////////////////////////////////////////////
     /* replace stimulus labels with train labels */
 // THIS IS NOT WORKING! CHANGES EVERY `stimuli` including the studySessionData one!
-//    stimuli.labels = stimuli.trainLabels;
+    trnStimuli.labels = jatos.studySessionData["stimuli"].trainLabels;
     /* different from exp.js                     */
     ///////////////////////////////////////////////
 
-    stimuli.category_order = []; // we'll generate this later
-    stimuli.variant_order = []; // generate later
-    stimuli.exemplar_order = []; //generate this later
-    stimuli.mask_paths = []; // generate for later
-    stimuli.prompt_order = []; // generate this later
-    stimuli.prompt_html_array = [];// generate this later
+    trnStimuli.category_order = []; // we'll generate this later
+    trnStimuli.variant_order = []; // generate later
+    trnStimuli.exemplar_order = []; //generate this later
+    trnStimuli.mask_paths = []; // generate for later
+    trnStimuli.prompt_order = []; // generate this later
+    trnStimuli.prompt_html_array = [];// generate this later
 
     console.log("generate trial information");
 
     // this is balanced by jatos now, so we can leave this here
-    stimuli.prompt_order = Array.from({length: stimuli.labels.length}, (e, i)=> i);
+    trnStimuli.prompt_order = Array.from({length: trnStimuli.labels.length}, (e, i)=> i);
 
     // get total trials to loop through
-    var trialsRemaining = stimuli.labels.length*stimuli.exemplars*stimuli.quantity;
+    var trialsRemaining = trnStimuli.labels.length*trnStimuli.exemplars*trnStimuli.quantity;
 
     // put together keys and prompt
     var theseKeys = jatos.studySessionData["keys"].concat(jatos.studySessionData["keys_other"]);
     var thisPrompt = '<p>';
     for (promptIdx = 0; promptIdx < jatos.studySessionData["keys"].length; promptIdx++) {
-       thisPrompt = thisPrompt+JSON.stringify(jatos.studySessionData["keys"][promptIdx])+': '+JSON.stringify(stimuli.labels[promptIdx]);
+       thisPrompt = thisPrompt+JSON.stringify(jatos.studySessionData["keys"][promptIdx])+': '+JSON.stringify(trnStimuli.labels[promptIdx]);
         if (promptIdx < jatos.studySessionData["keys"].length-1){
             thisPrompt = thisPrompt+'<span style="display: inline-block; margin-left: 40px;"></span>';
         }
@@ -58,9 +58,9 @@ jatos.onLoad(function() {
         // so if we have 2 exemplars per block, we'll randomly select e.g. 2 of the 16 cars, and of those two, we'll select two bubble variants---one for each
         var randomExemplars = [];
         var randomVariants = [];
-        for (exemplarNum=0; exemplarNum < stimuli.exemplars_per_block; exemplarNum++) {
-            randomExemplars[exemplarNum] = stimuli.exemplars_used[Math.floor(Math.random() * stimuli.exemplars_used.length)];
-            randomVariants[exemplarNum] = randomNumberFrom(1,stimuli.quantity);
+        for (exemplarNum=0; exemplarNum < trnStimuli.exemplars_per_block; exemplarNum++) {
+            randomExemplars[exemplarNum] = trnStimuli.exemplars_used[Math.floor(Math.random() * trnStimuli.exemplars_used.length)];
+            randomVariants[exemplarNum] = randomNumberFrom(1,trnStimuli.quantity);
         }
 
         // now we loop through labels/categories and map these random stimuli to each label
@@ -68,19 +68,19 @@ jatos.onLoad(function() {
         var tmpExemplars = [];
         var tmpStimuli = [];
         var tmpVariants = [];
-        for (stimNum=0; stimNum < stimuli.labels.length; stimNum++) {
+        for (stimNum=0; stimNum < trnStimuli.labels.length; stimNum++) {
 
             // concatenate our randomExemplars for each stimulus category
             tmpExemplars = tmpExemplars.concat(randomExemplars);
 
             // get an equivalent array so we know what stimuli these exemplars belong to
-            tmpStimuli = tmpStimuli.concat(Array(stimuli.exemplars_per_block).fill(stimNum));
+            tmpStimuli = tmptrnStimuli.concat(Array(trnStimuli.exemplars_per_block).fill(stimNum));
 
             // and concat our variants
             tmpVariants = tmpVariants.concat(randomVariants);
 
             // now we iterate our trials remaining
-            trialsRemaining = trialsRemaining-(1*stimuli.exemplars_per_block);
+            trialsRemaining = trialsRemaining-(1*trnStimuli.exemplars_per_block);
         }
         // by the end of this, we'll have three variables:
         //  tmpExemplars: trial by trial, what exemplar should we show?
@@ -92,9 +92,9 @@ jatos.onLoad(function() {
         shuffle(tmpStimuli,tmpExemplars,tmpVariants);
 
         // now we put that shuffled order into the variable we'll use later to create our trials
-        stimuli.category_order = stimuli.category_order.concat(tmpStimuli);
-        stimuli.exemplar_order = stimuli.exemplar_order.concat(tmpExemplars);
-        stimuli.variant_order = stimuli.variant_order.concat(tmpVariants);
+        trnStimuli.category_order = trnStimuli.category_order.concat(tmpStimuli);
+        trnStimuli.exemplar_order = trnStimuli.exemplar_order.concat(tmpExemplars);
+        trnStimuli.variant_order = trnStimuli.variant_order.concat(tmpVariants);
     }
 
 
@@ -188,7 +188,7 @@ jatos.onLoad(function() {
 
     if (jatos.studySessionData["training_on"] === 1) {
 
-        for (trial = 0; trial < stimuli.category_order.length; trial++) {
+        for (trial = 0; trial < trnStimuli.category_order.length; trial++) {
 
             timeline.push(
                 {...fixation,
@@ -218,24 +218,24 @@ jatos.onLoad(function() {
                         var stimulus_index = jsPsych.data.get().last(3).values()[0].trial_num; // refer to that index we made earlier
 
                         // do response-type specific coding
-                        console.log(stimuli.category_order[stimulus_index])
+                        console.log(trnStimuli.category_order[stimulus_index])
                         console.log(response)
                         console.log(theseKeys.indexOf(response))
-                        if (theseKeys.indexOf(response) == stimuli.category_order[stimulus_index]) {
+                        if (theseKeys.indexOf(response) == trnStimuli.category_order[stimulus_index]) {
                             console.log('correct')
                             data.correct = true;
                         } else {
                             console.log('incorrect')
                             data.correct = false;
                         }
-                        data.response_label = stimuli.labels[theseKeys.indexOf(response)];
+                        data.response_label = trnStimuli.labels[theseKeys.indexOf(response)];
                         if (data.response_label === undefined) {
                             data.response_label = 'not sure or none of these'
                         }
 
 
-                        data.stimulus_label = stimuli.labels[stimuli.category_order[stimulus_index]];
-                        data.stimulus_variant = stimuli.variant_order[stimulus_index];
+                        data.stimulus_label = trnStimuli.labels[trnStimuli.category_order[stimulus_index]];
+                        data.stimulus_variant = trnStimuli.variant_order[stimulus_index];
 
                         ////////////////////////////////////////
                         /* adjust our training countertrials */
