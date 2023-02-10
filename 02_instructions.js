@@ -364,6 +364,24 @@ jatos.onLoad(function() {
                 instruction_resp,
                 {
                     ...instruction_noresp,
+                    stimulus: "<p>Sometimes you might not know what the answer is. Or sometime you might think that the image doesn't match any of the responses.<br><br>In these cases you can look to the last two keys:"+JSON.stringify(jatos.studySessionData["keys_other"][0])+"and"+JSON.stringify(jatos.studySessionData["keys_other"][1])+"<br>Have a look on the next screen.</p>"
+                },
+                instruction_resp,
+                fixation,
+                {
+                   ...stimulus_presentation, 
+                    stimulus: function(){return stimulusPathFactory(instructionLabels[2], thisExemplar, variant(), 5, 'stimulus')},
+                    stimulus_duration: stimulus_display_time*trnTimeModifier,
+                    trial_duration: stimulus_display_time+stimulus_blank_time*trnTimeModifier,
+                },
+                {
+                    ...random_mask,
+                    stimulus: function(){return stimulusPathFactory(instructionLabels[2], thisExemplar, null, null, 'mask')},
+                    stimulus_duration: mask_time,
+                    trial_duration: response_time*2,
+                },
+                {
+                    ...instruction_noresp,
                     stimulus: "<p>Lastly, there will be attention checks occasionally. Let me show you what they look like.</p>"
                 },
                 instruction_resp,
@@ -376,6 +394,11 @@ jatos.onLoad(function() {
                 {
                     ...instruction_noresp,
                     stimulus: "<p>That's it! See the image, then use the keyboard to tell me what you saw.<br>Please answer as fast as you can, but also try to be as accurate as you can.<br>Let's practice a bit!</p>"
+                },
+                instruction_resp,
+                {
+                    ...instruction_noresp,
+                    stimulus: "<p>Just note, from now on, we might change the images from the ones we've been using for these instructions.</p>"
                 },
                 instruction_resp,
             ]
