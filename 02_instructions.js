@@ -113,6 +113,35 @@ jatos.onLoad(function() {
             }
         }
 
+        var catch_trial = [
+                {
+                    type: 'image-keyboard-response',
+                    choices: [theseKeys[0],theseKeys[1]],
+                    prompt: '<p>'+JSON.stringify(theseKeys[0])+': yes '+JSON.stringify(theseKeys[1])+': no</p>',
+                    margin_vertical: 4,
+                    stimulus: 'stimuli/catch-trial.png', // we need to create this
+                    stimulus_height: 500,
+                    stimulus_duration: jatos.studySessionData["catch_trial_time"],
+                    trial_duration: jatos.studySessionData["response_time"],
+                    data: {experiment_part: 'catchTrial'} // we can use this information to filter trials
+                },
+                {
+                    type: "html-keyboard-response",
+                    stimulus: function() {
+                        var response = jsPsych.data.get().last(1).values()[0].response;
+                        if (response != 1) { // we assume yes inserted second, so it will be 1 as javascript starts at 0 when counting
+                            return '<p>incorrect<br>'
+                                +'<br>Please pay attention or we will not be able to continue!</p>';
+                        } else { // else if false
+                            return "<p>correct!<br>thanks for paying attention.</p>";
+                        }
+                    },
+                    choices: jsPsych.NO_KEYS,
+                    trial_duration: jatos.studySessionData["catch_trial_feedback_time"],
+                    data: {experiment_part: 'catchTrial-feedback'}
+                }
+        ];
+
         var instructions = {
             timeline: [
                 {
@@ -331,6 +360,17 @@ jatos.onLoad(function() {
                 {
                     ...instruction_noresp,
                     stimulus: "<p>The correct answer there was "+JSON.stringify(instructionLabels[1])+" which is key "+JSON.stringify(theseKeys[1])+".</p>"
+                },
+                instruction_resp,
+                {
+                    ...instruction_noresp,
+                    stimulus: "<p>Lastly, there will be attention checks occasionally. Let me show you what they look like.</p>"
+                },
+                instruction_resp,
+                ...catch_trial,
+                {
+                    ...instruction_noresp,
+                    stimulus: "<p>You can't miss or get wrong more than"+JSON.stringify(jatos.studySessionData["maxBadCatchTrials"])+" of these, or the experiment will end!<br>So please do pay attention.</p>"
                 },
                 instruction_resp,
                 {
