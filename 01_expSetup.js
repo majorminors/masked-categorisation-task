@@ -20,7 +20,7 @@ jatos.onLoad(function() {
     jatos.studySessionData["response_time"]             = 2000; // max time for participant response
     jatos.studySessionData["training_correct"]          = 20; // after how many correct trials should training finish?
     jatos.studySessionData["catch_trials"]              = 20; // after how many trials should there be catch trials?
-    jatos.studySessionData["catch_trial_time"]          = 600; // how long should we display the catch trial image?
+    jatos.studySessionData["catch_trial_time"]          = 1000; // how long should we display the catch trial image?
     jatos.studySessionData["catch_trial_feedback_time"] = 2000; // and how long to display feedback afterwards?
     jatos.studySessionData["maxBadCatchTrials"]         = 10; // how many bad catch trials should there be?
 
