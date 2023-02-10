@@ -270,6 +270,22 @@ var break_trial = {
                 timeline.push(break_trial);
             }
         }
+        if (trial != 0) {
+            if (trial % stimuli.exemplars_per_block === 0) {
+                timeline.push(
+                    {
+                        type: 'html-keyboard-response',
+                        choices: jsPsych.NO_KEYS,
+                        trial_duration: fixation_time,
+                        data: {experiment_part: 'exp_feedback'} // we use this information to filter trials
+                        stimulus: function() {
+                            lastCorrect = jsPsych.data.get().last(1).values()[0].correct;
+                            percentageCorrect = (lastCorrect/stimuli.exemplars_per_block)*100;
+                            return '<div style="height: 250px"><p style="font-size: 48px; color: green;">You are averaging '++'% correct.</p></div>';
+                    }
+                );
+            }
+        }
 
         // now check what kind of experimental trial to insert
         if (trial < stimulus_difficulty.history && stimulus_difficulty.adaptive != true) {

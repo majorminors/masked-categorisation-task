@@ -369,17 +369,24 @@ jatos.onLoad(function() {
                 instruction_resp,
                 fixation,
                 {
+                // thisLabel = jatos.studySessionData["stimuli"].labels not in instructionLabels
                    ...stimulus_presentation, 
                     stimulus: function(){return stimulusPathFactory(instructionLabels[2], thisExemplar, variant(), 5, 'stimulus')},
                     stimulus_duration: stimulus_display_time*trnTimeModifier,
                     trial_duration: stimulus_display_time+stimulus_blank_time*trnTimeModifier,
                 },
                 {
+                // must change to thisLabel
                     ...random_mask,
                     stimulus: function(){return stimulusPathFactory(instructionLabels[2], thisExemplar, null, null, 'mask')},
                     stimulus_duration: mask_time,
                     trial_duration: response_time*2,
                 },
+                {
+                    ...instruction_noresp,
+                    stimulus: "<p>None of the category responses were correct there, so you would have selected 'none of these' which is key: "+JSON.stringify(jatos.studySessionData["keys_other"][0])+".</p>"
+                },
+                instruction_resp,
                 {
                     ...instruction_noresp,
                     stimulus: "<p>Lastly, there will be attention checks occasionally. Let me show you what they look like.</p>"

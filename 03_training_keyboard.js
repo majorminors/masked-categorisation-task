@@ -199,6 +199,46 @@ jatos.onLoad(function() {
 
         for (trial = 0; trial < stimuli.category_order.length; trial++) {
 
+            // arbitrary split to insert a 'none of these' trial
+            if (trainingCounter % round(jatos.studySessionData["training_correct"])/3)) {
+                timeline.push(
+                    {...fixation,
+                        data: {...fixation.data,
+                            trial_num: trial
+                        }
+                    },
+                    {...stimulus_presentation,
+                    stimulus: function(){
+                            // where jatos.studySessionData["stimuli"].labels not in jatos.studySessionData["stimuli"].exemplars_used
+                        return stimulusPathFactory(instructionLabels[2], thisExemplar, variant(), 5, 'stimulus');
+                    },
+                    {...random_mask,
+                        stimulus: function() {
+                        return stimulusPathFactory(instructionLabels[2], thisExemplar, variant(), 5, 'stimulus');
+                        },
+                        on_finish: function(data) {
+                            if (theseKeys.indexOf(response) != jatos.studySessionData["keys_other"][1]) {
+                                console.log('correct')
+                                data.correct = true;
+                            } else {
+                                console.log('incorrect')
+                                data.correct = false;
+                            }
+                        }
+                    },
+                    {...trnFeedback,
+                        stimulus: function() {
+                            lastCorrect = jsPsych.data.get().last(1).values()[0].correct;
+                            if (lastCorrect == true) {
+                                return '<div style="height: 250px"><p style="font-size: 48px; color: green;">correct!</p></div>';
+                            } else {
+                                return '<div style="height: 250px"><p style="font-size: 48px; color: red;">incorrect---that was none of the response options shown</p></div>';
+                            }
+                        }
+                    },
+                );
+            }
+
             timeline.push(
                 {...fixation,
                     data: {...fixation.data,
@@ -207,10 +247,8 @@ jatos.onLoad(function() {
                 },
                 {...stimulus_presentation,
                     stimulus: function() {
-                        return getStimulus(
-                            jsPsych.data.get().last(1).values()[0].trial_num, // use the index we specified in fixation
-                            thisDifficulty,
-                            stimuli
+                        // where stimuli not in stimuli
+                        return function(){return stimulusPathFactory(instructionLabels[2], thisExemplar, variant(), thisDifficulty, 'stimulus')};
                         );
                     },
                 },
