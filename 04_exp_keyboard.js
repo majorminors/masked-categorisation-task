@@ -279,9 +279,9 @@ var break_trial = {
                         trial_duration: fixation_time,
                         data: {experiment_part: 'exp_feedback'} // we use this information to filter trials
                         stimulus: function() {
-                            lastCorrect = jsPsych.data.get().last(1).values()[0].correct;
-                            percentageCorrect = (lastCorrect/stimuli.exemplars_per_block)*100;
-                            return '<div style="height: 250px"><p style="font-size: 48px; color: green;">You are averaging '++'% correct.</p></div>';
+                            var lastCorrect = jsPsych.data.get().last(stimuli.exemplars_per_block.length()-1).values()[0].correct;
+                            var percentageCorrect = (lastCorrect/stimuli.exemplars_per_block.length()-1)*100;
+                            return '<div style="height: 250px"><p style="font-size: 48px; color: green;">You are averaging '+JSON.stringify(percentageCorrect)+'% correct.</p></div>';
                     }
                 );
             }

@@ -209,12 +209,13 @@ jatos.onLoad(function() {
                     },
                     {...stimulus_presentation,
                     stimulus: function(){
-                            // where jatos.studySessionData["stimuli"].labels not in jatos.studySessionData["stimuli"].exemplars_used
-                        return stimulusPathFactory(instructionLabels[2], thisExemplar, variant(), 5, 'stimulus');
+                        var noneOfTheseLabel = jatos.studySessionData["stimuli"].labels.filter(x => !jatos.studySessionData["stimuli"].exemplars_used.includes(x))[0];
+                        return stimulusPathFactory(noneOfTheseLabel, thisExemplar, variant(), 5, 'stimulus');
                     },
                     {...random_mask,
                         stimulus: function() {
-                        return stimulusPathFactory(instructionLabels[2], thisExemplar, variant(), 5, 'stimulus');
+                            var noneOfTheseLabel = jatos.studySessionData["stimuli"].labels.filter(x => !jatos.studySessionData["stimuli"].exemplars_used.includes(x))[0];
+                            return stimulusPathFactory(noneOfTheseLabel, thisExemplar, null, null, 'mask');
                         },
                         on_finish: function(data) {
                             if (theseKeys.indexOf(response) != jatos.studySessionData["keys_other"][1]) {

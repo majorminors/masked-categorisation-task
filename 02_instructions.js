@@ -19,6 +19,8 @@ jatos.onLoad(function() {
 
         // let's grab a category not in use by our exp
         var instructionLabels = jatos.studySessionData["stimuli"].trainLabels;
+        // and the first label that's not in the training set for a 'none of these' response
+        var noneOfTheseLabel = jatos.studySessionData["stimuli"].labels.filter(x => !jatos.studySessionData["stimuli"].trainLabels.includes(x))[0];
         var thisExemplar = 1; // we'll just select the first exemplar for all our instruction trials
         var thisDifficulty = jatos.studySessionData["stimulus_difficulty"].training; // and the training difficulty
         var variant = randomNoRepeats(Array.from({length: jatos.studySessionData["stimuli"].quantity}, (_, i) => i + 1)); // and a random variant function we can reuse
@@ -369,16 +371,14 @@ jatos.onLoad(function() {
                 instruction_resp,
                 fixation,
                 {
-                // thisLabel = jatos.studySessionData["stimuli"].labels not in instructionLabels
                    ...stimulus_presentation, 
-                    stimulus: function(){return stimulusPathFactory(instructionLabels[2], thisExemplar, variant(), 5, 'stimulus')},
+                    stimulus: function(){return stimulusPathFactory(noneOfTheseLabel, thisExemplar, variant(), 5, 'stimulus')},
                     stimulus_duration: stimulus_display_time*trnTimeModifier,
                     trial_duration: stimulus_display_time+stimulus_blank_time*trnTimeModifier,
                 },
                 {
-                // must change to thisLabel
                     ...random_mask,
-                    stimulus: function(){return stimulusPathFactory(instructionLabels[2], thisExemplar, null, null, 'mask')},
+                    stimulus: function(){return stimulusPathFactory(noneOfTheseLabel, thisExemplar, null, null, 'mask')},
                     stimulus_duration: mask_time,
                     trial_duration: response_time*2,
                 },
