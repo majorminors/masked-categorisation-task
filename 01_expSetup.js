@@ -28,8 +28,14 @@ jatos.onLoad(function() {
     jatos.studySessionData["break_trials"] = 0; // after how many trials should there be break trials?
     jatos.studySessionData["break_time"] = 0; // and for how long (ms)?
 
-    jatos.studySessionData["keys_other"] = ['k','l']; // what keys if the keyboard option for not sure, none of these?
-    jatos.studySessionData["keys"] = ['a','s','d','f']; // what keys if the keyboard option?
+    if (jatos.studySessionData["handedness"] == 'left') {
+        jatos.studySessionData["keys_other"] = ['j','k']; // what keys if the keyboard option for not sure, none of these?
+        jatos.studySessionData["keys"] = ['a','s','d','f']; // what keys if the keyboard option?
+    } else if (jatos.studySessionData["handedness"] == 'right') {
+        jatos.studySessionData["keys_other"] = ['s','d']; // what keys if the keyboard option for not sure, none of these?
+        jatos.studySessionData["keys"] = ['h','j','k','l']; // what keys if the keyboard option?
+    }
+
 
     jatos.studySessionData["stimulus_difficulty"] = {
         valid: [1,2,3,4,5], // valid stimulus difficulties, should correspond to folder names
