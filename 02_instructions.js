@@ -426,7 +426,7 @@ jatos.onLoad(function() {
                 ...catch_trial,
                 {
                     ...instruction_noresp,
-                    stimulus: "<p>You can't miss or get wrong more than"+JSON.stringify(jatos.studySessionData["maxBadCatchTrials"])+" of these, or the experiment will end!<br>So please do pay attention.</p>"
+                    stimulus: "<p>You can't miss or get wrong more than "+JSON.stringify(jatos.studySessionData["maxBadCatchTrials"])+" of these, or the experiment will end!<br>So please do pay attention.</p>"
                 },
                 instruction_resp,
                 {
