@@ -28,13 +28,6 @@ jatos.onLoad(function() {
     jatos.studySessionData["break_trials"] = 0; // after how many trials should there be break trials?
     jatos.studySessionData["break_time"] = 0; // and for how long (ms)?
 
-    if (jatos.studySessionData["handedness"] == 'left') {
-        jatos.studySessionData["keys_other"] = ['j','k']; // what keys if the keyboard option for not sure, none of these?
-        jatos.studySessionData["keys"] = ['a','s','d','f']; // what keys if the keyboard option?
-    } else if (jatos.studySessionData["handedness"] == 'right') {
-        jatos.studySessionData["keys_other"] = ['s','d']; // what keys if the keyboard option for not sure, none of these?
-        jatos.studySessionData["keys"] = ['h','j','k','l']; // what keys if the keyboard option?
-    }
 
 
     jatos.studySessionData["stimulus_difficulty"] = {
@@ -79,9 +72,6 @@ jatos.onLoad(function() {
     //////////////////
     /* setup begins */
     //////////////////
-
-    // little check that we have enough keys
-    if (jatos.studySessionData["keys"].length != jatos.studySessionData["num_categories"]) {throw 'keys and number of categories dont match!';}
 
     // subselect categories randomly, and apply the response conditions to them
     var selector = randomNoRepeats(jatos.studySessionData["stimuli"].labels); // quick anon function to grab items randomly with no repeats
@@ -146,6 +136,7 @@ jatos.onLoad(function() {
             },
         );
     }
+
 
     // standardise the screen size
     // after the consent stuff because it makes the survey plugin super tiny

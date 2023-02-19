@@ -2,6 +2,23 @@ jatos.onLoad(function() {
 
     var skipInstructions = 0;
 
+    console.log(jatos.studySessionData["handedness"])
+
+    // grab key information now we know what hand they have
+    if (jatos.studySessionData["handedness"] == 'left') {
+        jatos.studySessionData["keys_other"] = ['j','k']; // what keys if the keyboard option for not sure, none of these?
+        jatos.studySessionData["keys"] = ['a','s','d','f']; // what keys if the keyboard option?
+        jatos.studySessionData["key_map_img"] = 'stimuli/left-hand-position.png'; // what keys if the keyboard option?
+    } else if (jatos.studySessionData["handedness"] == 'right') {
+        jatos.studySessionData["keys_other"] = ['s','d']; // what keys if the keyboard option for not sure, none of these?
+        jatos.studySessionData["keys"] = ['h','j','k','l']; // what keys if the keyboard option?
+        jatos.studySessionData["key_map_img"] = 'stimuli/right-hand-position.png'; // what keys if the keyboard option?
+    }
+
+    // little check that we have enough keys
+    if (jatos.studySessionData["keys"].length != jatos.studySessionData["num_categories"]) {throw 'keys and number of categories dont match!';}
+
+
     if (skipInstructions == 1) {
 
         var timeline = [
@@ -151,6 +168,24 @@ jatos.onLoad(function() {
                     stimulus: "<p>Placeholder text welcoming to experiment etc.</p>"
                 },
                 instruction_resp,
+                {
+                    type: 'image-keyboard-response',
+                    stimulus_height: 500,
+                    choices: jsPsych.NO_KEYS,
+                    margin_vertical: 4,
+                    prompt: 'Please place your hands as shown.',
+                    stimulus: jatos.studySessionData["key_map_img"],
+                    // specify these later
+                    trial_duration: 1000,
+                },
+                {
+                    type: 'image-keyboard-response',
+                    stimulus_height: 500,
+                    margin_vertical: 4,
+                    prompt: 'Once your hands are placed, press any key to continue.',
+                    stimulus: jatos.studySessionData["key_map_img"],
+                    // specify these later
+                },
                 {
                     ...instruction_noresp,
                     stimulus: "<p>First you'll see an image, followed by a fuzzy version of the image.<br>Let me show you an example.</p>"
