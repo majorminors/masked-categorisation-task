@@ -28,7 +28,7 @@ jatos.onLoad(function() {
     jatos.studySessionData["break_trials"] = 0; // after how many trials should there be break trials?
     jatos.studySessionData["break_time"] = 0; // and for how long (ms)?
 
-
+// keys moved to start of instructions script, since it needs to read in from demographics
 
     jatos.studySessionData["stimulus_difficulty"] = {
         valid: [1,2,3,4,5], // valid stimulus difficulties, should correspond to folder names
@@ -47,9 +47,7 @@ jatos.onLoad(function() {
             'car',
             'elephant',
             'goldfish',
-            'hammer',
             'hand_blower',
-            'hat',
             'iron',
             'ladybug',
             'pineapple',

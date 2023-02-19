@@ -170,19 +170,15 @@ jatos.onLoad(function() {
                 instruction_resp,
                 {
                     type: 'image-keyboard-response',
-                    stimulus_height: 500,
                     choices: jsPsych.NO_KEYS,
-                    margin_vertical: 4,
-                    prompt: 'Please place your hands as shown.',
+                    prompt: '<p>Please place your hands as shown.</p>',
                     stimulus: jatos.studySessionData["key_map_img"],
                     // specify these later
                     trial_duration: 1000,
                 },
                 {
                     type: 'image-keyboard-response',
-                    stimulus_height: 500,
-                    margin_vertical: 4,
-                    prompt: 'Once your hands are placed, press any key to continue.',
+                    prompt: '<p>Once your hands are placed, press any key to continue.</p>',
                     stimulus: jatos.studySessionData["key_map_img"],
                     // specify these later
                 },
