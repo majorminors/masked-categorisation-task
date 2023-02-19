@@ -270,18 +270,28 @@ var break_trial = {
                 timeline.push(break_trial);
             }
         }
+        var trialsBeforeFeedback = 24;
         if (trial != 0) {
-            if (trial % stimuli.exemplars_per_block === 0) {
+            if (trial % trialsBeforeFeedback === 0) {
                 timeline.push(
                     {
                         type: 'html-keyboard-response',
                         choices: jsPsych.NO_KEYS,
                         trial_duration: fixation_time,
-                        data: {experiment_part: 'exp_feedback'} // we use this information to filter trials
                         stimulus: function() {
-                            var lastCorrect = jsPsych.data.get().last(stimuli.exemplars_per_block.length()-1).values()[0].correct;
-                            var percentageCorrect = (lastCorrect/stimuli.exemplars_per_block.length()-1)*100;
+                            var lastCorrect = 0;
+                            var lastTrials = jsPsych.data.get().filter({experiment_part: 'response'}).last(trialsBeforeFeedback).values();
+                            for (corrIdx = 0; corrIdx < lastTrials.length; corrIdx++) {
+                               if (lastTrials[corrIdx].correct) {
+                                    lastCorrect++;
+                               }
+                            }
+                            var percentageCorrect = Math.round((lastCorrect/trialsBeforeFeedback)*100);
+                            console.log('last correct: ', lastCorrect)
+                            console.log('percentage correct: ', percentageCorrect)
                             return '<div style="height: 250px"><p style="font-size: 48px; color: green;">You are averaging '+JSON.stringify(percentageCorrect)+'% correct.</p></div>';
+                        },
+                        data: {experiment_part: 'exp_feedback'} // we use this information to filter trials
                     }
                 );
             }
