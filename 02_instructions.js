@@ -165,7 +165,7 @@ jatos.onLoad(function() {
             timeline: [
                 {
                     ...instruction_noresp,
-                    stimulus: "<p>Placeholder text welcoming to experiment etc.</p>"
+                    stimulus: "<p>Welcome and thank you for participating in our experiment!</p>"
                 },
                 instruction_resp,
                 {
