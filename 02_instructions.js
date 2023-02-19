@@ -1,6 +1,6 @@
 jatos.onLoad(function() {
 
-    var skipInstructions = 1;
+    var skipInstructions = 0;
 
     console.log(jatos.studySessionData["handedness"])
 

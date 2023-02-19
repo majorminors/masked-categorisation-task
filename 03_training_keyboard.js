@@ -1,6 +1,6 @@
 jatos.onLoad(function() {
 
-    var skipTraining = 1;
+    var skipTraining = 0;
 
     if (skipTraining == 1) {
 
