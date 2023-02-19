@@ -19,9 +19,9 @@ jatos.onLoad(function() {
     jatos.studySessionData["mask_time"]                 = 180; // ms to display mask (at start of response period)
     jatos.studySessionData["response_time"]             = 2000; // max time for participant response
     jatos.studySessionData["training_correct"]          = 20; // after how many correct trials should training finish?
-    jatos.studySessionData["catch_trials"]              = 20; // after how many trials should there be catch trials?
-    jatos.studySessionData["catch_trial_time"]          = 1000; // how long should we display the catch trial image?
-    jatos.studySessionData["catch_trial_feedback_time"] = 2000; // and how long to display feedback afterwards?
+    jatos.studySessionData["catch_trials"]              = 24; // after how many trials should there be catch trials?
+    jatos.studySessionData["catch_trial_time"]          = 1500; // how long should we display the catch trial image?
+    jatos.studySessionData["catch_trial_feedback_time"] = 1500; // and how long to display feedback afterwards?
     jatos.studySessionData["maxBadCatchTrials"]         = 10; // how many bad catch trials should there be?
 
     // this will work, but will need adjusting (for example, should we tell the participants how long the break is for?)

@@ -277,7 +277,7 @@ var break_trial = {
                     {
                         type: 'html-keyboard-response',
                         choices: jsPsych.NO_KEYS,
-                        trial_duration: fixation_time,
+                        trial_duration: catch_trial_feedback_time,
                         stimulus: function() {
                             var lastCorrect = 0;
                             var lastTrials = jsPsych.data.get().filter({experiment_part: 'response'}).last(trialsBeforeFeedback).values();
