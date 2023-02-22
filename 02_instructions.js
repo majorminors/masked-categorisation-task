@@ -225,6 +225,11 @@ jatos.onLoad(function() {
                     stimulus: "<p>The correct answer there was "+JSON.stringify(instructionLabels[0])+" which is key "+JSON.stringify(theseKeys[0])+".<br>Let's do another.</p>"
                 },
                 instruction_resp,
+                {
+                    ...instruction_noresp,
+                    stimulus: "<p>Now, if you didn't see any images, then I think my task is too big for your internet!<br>My apologies, but we can't continue.<br>Please exit now and return the submission.</p>"
+                },
+                instruction_resp,
                 fixation,
                 {
                    ...stimulus_presentation, 
