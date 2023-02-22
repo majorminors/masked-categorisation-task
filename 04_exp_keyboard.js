@@ -291,7 +291,16 @@ var break_trial = {
                             console.log('percentage correct: ', percentageCorrect)
                             return '<div style="height: 250px"><p style="font-size: 48px; color: green;">You are averaging '+JSON.stringify(percentageCorrect)+'% correct.</p></div>';
                         },
-                        data: {experiment_part: 'exp_feedback'} // we use this information to filter trials
+                        data: {experiment_part: 'exp_feedback'}, // we use this information to filter trials
+                        on_finish: function(){
+                            // send the results to jatos in case of failure (will override existing)
+                            var thisSessionData = jatos.studySessionData;
+                            var thisExpData = JSON.parse(jsPsych.data.get().json());
+                            var resultJson = {...thisSessionData, ...thisExpData};
+                            jatos.submitResultData(resultJson)
+                               .then(() => console.log('data submitted, results saved'));
+                            console.log('results saved');
+                        }
                     }
                 );
             }
