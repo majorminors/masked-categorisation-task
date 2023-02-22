@@ -206,7 +206,7 @@ var break_trial = {
                                 .then(() => console.log('failed too many attention checks. data saved, now redirecting'))
                                 .then(jatos.endStudyAjax)
                                 .then(() => {
-                                    window.location.href = 'https://app.prolific.co/submissions/complete?cc=C17J29Z9'
+                                    window.location.href = jatos.studySessionData["prolificURL"]+jatos.studySessionData["prolificCodeFail"];
                                 });
                             // comment this out, since we'll redirect to prolific and that will tell them
                             // jsPsych.endExperiment('The experiment was ended: too many failed attention checks.') // this message doesn't show?

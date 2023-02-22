@@ -24,6 +24,11 @@ jatos.onLoad(function() {
     jatos.studySessionData["catch_trial_feedback_time"] = 1500; // and how long to display feedback afterwards?
     jatos.studySessionData["maxBadCatchTrials"]         = 10; // how many bad catch trials should there be?
 
+    // prolific stuff
+    jatos.studySessionData["prolificURL"] = 'https://app.prolific.co/submissions/complete?cc=';
+    jatos.studySessionData["prolificCodeEnd"] = 'C183IXND';
+    jatos.studySessionData["prolificCodeFail"] = 'C135JG7M';
+
     // this will work, but will need adjusting (for example, should we tell the participants how long the break is for?)
     jatos.studySessionData["break_trials"] = 0; // after how many trials should there be break trials?
     jatos.studySessionData["break_time"] = 0; // and for how long (ms)?
