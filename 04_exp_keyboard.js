@@ -198,9 +198,19 @@ var break_trial = {
                         console.log('bad catch trial');
                         badCatchTrials = badCatchTrials+1;
                         if (badCatchTrials == maxBadCatchTrials) {
-                            jsPsych.data.addProperties({attention_failure: 1}); // let's add something so we can filter this dataset out later
-                            jsPsych.endExperiment('The experiment was ended: too many failed attention checks :)'); // don't know why jsPsych has text in there, it doesn't show
-                            document.body.innerHTML = 'The experiment was ended: too many failed attention checks :(';  // so let's add the text ourselves
+                            jsPsych.data.addProperties({attention_failure: 1}); // let's add something so we can filter this dataset out later if we want
+                            var thisSessionData = jatos.studySessionData;
+                            var thisExpData = JSON.parse(jsPsych.data.get().json());
+                            var resultJson = {...thisSessionData, ...thisExpData};
+                            jatos.submitResultData(resultJson)
+                                .then(() => console.log('failed too many attention checks. data saved, now redirecting'))
+                                .then(jatos.endStudyAjax)
+                                .then(() => {
+                                    window.location.href = 'https://app.prolific.co/submissions/complete?cc=C17J29Z9'
+                                });
+                            // comment this out, since we'll redirect to prolific and that will tell them
+                            // jsPsych.endExperiment('The experiment was ended: too many failed attention checks.') // this message doesn't show?
+                            // document.body.innerHTML = 'The experiment was ended: too many failed attention checks :(';  // so let's add the text ourselves
                         }
                         return '<p>incorrect<br>'
                             +JSON.stringify(badCatchTrials)
