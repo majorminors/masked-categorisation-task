@@ -288,15 +288,26 @@ jatos.onLoad(function() {
                             console.log(response)
                             console.log(theseKeys.indexOf(response))
                             if (theseKeys.indexOf(response) == stimuli.category_order[stimulus_index]) {
+                                console.log(theseKeys.indexOf(response))
                                 console.log('correct')
                                 data.correct = true;
                             } else {
+                                console.log(theseKeys.indexOf(response))
                                 console.log('incorrect')
                                 data.correct = false;
                             }
                             data.response_label = stimuli.labels[theseKeys.indexOf(response)];
                             if (data.response_label === undefined) {
-                                data.response_label = 'not sure or none of these'
+                                if (response == jatos.studySessionData["keys_other"][1]) {
+                                    console.log('none of these')
+                                    data.response_label = 'none_of_these'
+                                } else if (response == jatos.studySessionData["keys_other"][0]) {
+                                    console.log('not sure')
+                                    data.response_label = 'not_sure'
+                                } else {
+                                    console.log('invalid')
+                                    data.response_label = 'invalid'
+                                }
                             }
 
 
