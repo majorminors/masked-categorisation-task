@@ -125,6 +125,7 @@ jatos.onLoad(function() {
         }
         var instruction_resp = { // requires html stimulus entry in previous trial
             type: 'html-keyboard-response',
+            trial_duration: 10000,
             stimulus: function() {
                 var last_stim = jsPsych.data.get().last(1).values()[0].stimulus;
                 var addcontinue = last_stim+'<p style="position: fixed; bottom: 0; left: 50%; transform: translate(-50%, -50%); margin: 0 auto;"><br>Press any key to continue</p>';
@@ -178,6 +179,7 @@ jatos.onLoad(function() {
                 },
                 {
                     type: 'image-keyboard-response',
+                    trial_duration: 15000,
                     prompt: '<p>Once your hands are placed, press any key to continue.</p>',
                     stimulus: jatos.studySessionData["key_map_img"],
                     // specify these later
@@ -399,7 +401,10 @@ jatos.onLoad(function() {
                     ...instruction_noresp,
                     stimulus: "<p>Sometimes you might not know what the answer is. Or sometime you might think that the image doesn't match any of the responses.<br><br>In these cases you can look to the last two keys:"+JSON.stringify(jatos.studySessionData["keys_other"][0])+"and"+JSON.stringify(jatos.studySessionData["keys_other"][1])+"<br>Have a look on the next screen.</p>"
                 },
-                instruction_resp,
+                {
+                    ...instruction_resp,
+                    trial_duration: 12000
+                },
                 fixation,
                 {
                    ...stimulus_presentation, 
@@ -426,9 +431,17 @@ jatos.onLoad(function() {
                 ...catch_trial,
                 {
                     ...instruction_noresp,
-                    stimulus: "<p>You can't miss or get wrong more than "+JSON.stringify(jatos.studySessionData["maxBadCatchTrials"])+" of these, or the experiment will end!<br>So please do pay attention.</p>"
+                    stimulus: "<p>Don't worry if you didn't get it this time, it was just a practice.<br>In the experiment, you can't miss or get wrong more than "+JSON.stringify(jatos.studySessionData["maxBadCatchTrials"])+" of these, or the experiment will end!<br>So please do pay attention.</p>"
                 },
                 instruction_resp,
+                {
+                    ...instruction_noresp,
+                    stimulus: "<p>I'll give you feedback on how you're doing every so often.<br>Don't worry too much if you're not doing as well as you'd like.<br>Many of these trials are designed to be difficult.<br>I'm just as interested in your errors as your correct trials!<br>Just do your best, and please don't guess!<br>I won't be able to accept your submission if you're both inaccurate AND fast (inattentive guessing).<br>So just answer as best you can on each trial.</p>"
+                },
+                { 
+                    ...instruction_resp,
+                    trial_duration: 20000,
+                },
                 {
                     ...instruction_noresp,
                     stimulus: "<p>That's it! See the image, then use the keyboard to tell me what you saw.<br>Please answer as fast as you can, but also try to be as accurate as you can.<br>Let's practice a bit!</p>"
