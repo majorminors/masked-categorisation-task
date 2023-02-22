@@ -39,7 +39,7 @@ jatos.onLoad(function() {
         accuracy: 50, // percentage difficulty to titrate to
         history: 4, // number of trials to check accuracy over
         adaptive: false, // true (will titrate difficulty to `accuracy`) | false (will set difficulty to `order`)
-        order: [5,2,3], // will repmat whatever values you put in here if stimulus_difficulty.adaptive is true, and if the result doesn't evenly fit the amount of trials, it will add however many trials are left of the 0th element (so e.g. if [1,2,3], will repmat [1,2,3,1,2,3...] and if the result doesn't fit the number of trials, it will finish up by adding as many 1s as it needs [...1,2,3,1,1]. You can repmat here with `repeatThings(array,repetitions)`.
+        order: [1,2,3,4,5], // will repmat whatever values you put in here if stimulus_difficulty.adaptive is true, and if the result doesn't evenly fit the amount of trials, it will add however many trials are left of the 0th element (so e.g. if [1,2,3], will repmat [1,2,3,1,2,3...] and if the result doesn't fit the number of trials, it will finish up by adding as many 1s as it needs [...1,2,3,1,1]. You can repmat here with `repeatThings(array,repetitions)`.
     };
 
     jatos.studySessionData["stimuli"] = {
