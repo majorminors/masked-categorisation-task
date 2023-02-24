@@ -30,8 +30,8 @@ jatos.onLoad(function() {
     jatos.studySessionData["prolificCodeFail"] = 'C135JG7M';
 
     // this will work, but will need adjusting (for example, should we tell the participants how long the break is for?)
-    jatos.studySessionData["break_trials"] = 0; // after how many trials should there be break trials?
-    jatos.studySessionData["break_time"] = 0; // and for how long (ms)?
+    jatos.studySessionData["break_trials"] = 500; // after how many trials should there be break trials?
+    jatos.studySessionData["break_time"] = 120000; // and for how long (ms)?
 
 // keys moved to start of instructions script, since it needs to read in from demographics
 

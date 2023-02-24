@@ -449,6 +449,11 @@ jatos.onLoad(function() {
                 },
                 {
                     ...instruction_noresp,
+                    stimulus: "<p>Every so often, I've put in a two minute break.<br>So if you need to get some water or pee, please wait until then to do it!</p>"
+                },
+                instruction_resp,
+                {
+                    ...instruction_noresp,
                     stimulus: "<p>That's it! See the image, then use the keyboard to tell me what you saw.<br>Please answer as fast as you can, but also try to be as accurate as you can.<br>Let's practice a bit!</p>"
                 },
                 instruction_resp,

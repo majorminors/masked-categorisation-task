@@ -138,13 +138,21 @@ var fixation = {
     data: {experiment_part: 'fixation'} // we use this information to filter trials
 };
 
-var break_trial = {
-    type: "html-keyboard-response",
-    stimulus: '<p>Take a break!</p>',
-    choices: jsPsych.NO_KEYS,
-    trial_duration: break_time,
-    data: {experiment_part: 'break'}
-};
+var break_trial = [
+    {
+        type: "html-keyboard-response",
+        stimulus: '<p>Take a break!<br>You have '+JSON.stringify(jatos.studySessionData["break_time"]/1000/60)+'minutes.</p>',
+        choices: jsPsych.NO_KEYS,
+        trial_duration: 1000,
+        data: {experiment_part: 'break'}
+    },
+    {
+        type: "html-keyboard-response",
+        stimulus: '<p>Take a break!<br>You have '+JSON.stringify(jatos.studySessionData["break_time"]/1000/60)+'minutes.<br>Or press any key to continue.</p>',
+        trial_duration: break_time,
+        data: {experiment_part: 'break'}
+    },
+];
 
     // the scaffold for the actual stimulus presentation
     var stimulus_presentation = {
