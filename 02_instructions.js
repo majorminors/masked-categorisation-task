@@ -1,7 +1,5 @@
 jatos.onLoad(function() {
 
-    var skipInstructions = 0;
-
     console.log(jatos.studySessionData["handedness"])
 
     // grab key information now we know what hand they have
@@ -18,19 +16,6 @@ jatos.onLoad(function() {
     // little check that we have enough keys
     if (jatos.studySessionData["keys"].length != jatos.studySessionData["num_categories"]) {throw 'keys and number of categories dont match!';}
 
-
-    if (skipInstructions == 1) {
-
-        var timeline = [
-            {
-                type: 'html-keyboard-response',
-                stimulus: '<div><p>skipping instructions</p></div>',
-                choices: jsPsych.NO_KEYS,
-                trial_duration: 300,
-            }
-        ];
-        
-    } else {
 
         console.log("starting instructions");
 
@@ -464,18 +449,20 @@ jatos.onLoad(function() {
                 instruction_resp,
             ]
         }
-        if (jatos.studySessionData["instructions_on"] == 1) {
-            timeline.push(instructions);
-        } else {
-            timeline.push(
-                {
-                    type: "html-keyboard-response",
-                    stimulus: "<p>skipping instructions</p>",
-                },
-            );
-        }
 
-    } // end of skip instructions if statement
+    // turn them off if we want
+    if (jatos.studySessionData["instructions_on"] == 1) {
+        timeline.push(instructions);
+    } else {
+        timeline.push(
+            {
+                type: 'html-keyboard-response',
+                stimulus: '<div><p>skipping instructions</p></div>',
+                choices: jsPsych.NO_KEYS,
+                trial_duration: 300,
+            },
+        );
+    }
 
 
     jsPsych.init({
