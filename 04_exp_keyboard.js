@@ -48,7 +48,11 @@ jatos.onLoad(function() {
     stimuli.prompt_order = Array.from({length: stimuli.labels.length}, (e, i)=> i);
 
     // get total trials to loop through
-    var trialsRemaining = stimuli.labels.length*stimuli.exemplars_used.length*stimuli.quantity;
+    if (stimulus_difficulty.adaptive) {
+        var trialsRemaining = stimuli.labels.length*stimuli.exemplars_used.length*stimuli.quantity;
+    } else {
+        var trialsRemaining = stimuli.labels.length*stimuli.exemplars_used.length*stimuli.quantity*stimulus_difficulty.order.length;
+    }
 
     // put together keys and prompt
     var theseKeys = jatos.studySessionData["keys"].concat(jatos.studySessionData["keys_other"]);
@@ -81,6 +85,11 @@ jatos.onLoad(function() {
     // so how many trials do we have now?
     console.log('total trials');
     console.log(trialsRemaining);
+    console.log('which will take');
+    var totalTrialTime = trialsRemaining*(jatos.studySessionData["fixation_time"]+jatos.studySessionData["response_time"]+jatos.studySessionData["stimulus_display_time"]+jatos.studySessionData["stimulus_blank_time"]); // how many ms
+    totalTrialTime = totalTrialTime/1000; // how many s
+    totalTrialTime = totalTrialTime/60; // how many mins
+    console.log(JSON.stringify(totalTrialTime)+' mins plus catch trials, breaks and instructions (maybe 20-30 mins)');
     // alrighty, let's loop though the trials to work out what our stimulus order will be
     while (trialsRemaining > 0) {
 

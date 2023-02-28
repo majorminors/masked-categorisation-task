@@ -10,8 +10,9 @@ jatos.onLoad(function() {
     /* settings */
     //////////////
 
-    // trials go: fixation_time -> stimulus_display_time -> stimulus_blank_time -> mask_time -> response_time-mask_time
-    //            fixation ------> stimulus --------------> nothing -------------> mask ------> nothing --------------|
+    // trials go: fixation_time -> stimulus_display_time -> stimulus_blank_time -> mask_time -> response_time-mask_time -|
+    //            fixation ------> stimulus --------------> nothing -------------> mask ------> nothing -----------------|
+    //            cannot respond ------------------------------------------------> can respond --------------------------|
 
     jatos.studySessionData["fixation_time"]             = 200; // ms to display fixation
     jatos.studySessionData["stimulus_display_time"]     = 150; // ms to display trial
@@ -37,14 +38,14 @@ jatos.onLoad(function() {
 
     jatos.studySessionData["stimulus_difficulty"] = {
         valid: [1,2,3,4,5], // valid stimulus difficulties, should correspond to folder names
-        default: 3, // default stim difficulty (used for first trials to establish accuracy)
+        default: 2, // default stim difficulty (used for first trials to establish accuracy)
         training: 5, // what stim difficulty to use during training
         min: 1, // min stimulus difficulty (to limit titration from going too far down)
         max: 5, // max stimulus difficulty (to limit titration from going too far up)
         accuracy: 50, // percentage difficulty to titrate to
         history: 4, // number of trials to check accuracy over
         adaptive: false, // true (will titrate difficulty to `accuracy`) | false (will set difficulty to `order`)
-        order: [1,2,3,4,5], // will repmat whatever values you put in here if stimulus_difficulty.adaptive is true, and if the result doesn't evenly fit the amount of trials, it will add however many trials are left of the 0th element (so e.g. if [1,2,3], will repmat [1,2,3,1,2,3...] and if the result doesn't fit the number of trials, it will finish up by adding as many 1s as it needs [...1,2,3,1,1]. You can repmat here with `repeatThings(array,repetitions)`.
+        order: [1,2,4,5], // will repmat whatever values you put in here if stimulus_difficulty.adaptive is true, and if the result doesn't evenly fit the amount of trials, it will add however many trials are left of the 0th element (so e.g. if [1,2,3], will repmat [1,2,3,1,2,3...] and if the result doesn't fit the number of trials, it will finish up by adding as many 1s as it needs [...1,2,3,1,1]. You can repmat here with `repeatThings(array,repetitions)`.
     };
 
     jatos.studySessionData["stimuli"] = {
@@ -61,7 +62,7 @@ jatos.onLoad(function() {
             'violin',
         ],
         exemplars: 16, // quantity of exemplars of each category
-        exemplars_to_use: 3, // how many of these to use experiment-wide
+        exemplars_to_use: 2, // how many of these to use experiment-wide
         exemplars_per_block: 2, // number of exemplars to include in each block
         quantity: 50, // quantity of variants of each image exemplar
     };
