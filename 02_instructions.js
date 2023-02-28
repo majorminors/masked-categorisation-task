@@ -179,7 +179,7 @@ jatos.onLoad(function() {
                 },
                 {
                     type: 'image-keyboard-response',
-                    trial_duration: 15000,
+                    trial_duration: 25000,
                     prompt: '<p>Once your hands are placed, press any key to continue.</p>',
                     stimulus: jatos.studySessionData["key_map_img"],
                     // specify these later
