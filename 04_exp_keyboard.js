@@ -48,7 +48,7 @@ jatos.onLoad(function() {
     stimuli.prompt_order = Array.from({length: stimuli.labels.length}, (e, i)=> i);
 
     // get total trials to loop through
-    var trialsRemaining = stimuli.labels.length*stimuli.exemplars*stimuli.quantity;
+    var trialsRemaining = stimuli.labels.length*stimuli.exemplars_used.length*stimuli.quantity;
 
     // put together keys and prompt
     var theseKeys = jatos.studySessionData["keys"].concat(jatos.studySessionData["keys_other"]);
@@ -78,7 +78,10 @@ jatos.onLoad(function() {
         console.log('stimulus difficulty order generated: ',stimulus_difficulty.order);
     }
 
-    // alrighty, let's loop though our trials to work out what our stimulus order will be
+    // so how many trials do we have now?
+    console.log('total trials');
+    console.log(trialsRemaining);
+    // alrighty, let's loop though the trials to work out what our stimulus order will be
     while (trialsRemaining > 0) {
 
         // first we'll select random `exemplars_per_block` number of exemplars (and random variants of those exemplars) for this block of labels

@@ -103,6 +103,7 @@ jatos.onLoad(function() {
         randomExemplars[exemplarNum] = selector();
     }
     jatos.studySessionData["stimuli"].exemplars_used = randomExemplars;
+    console.log('exemplars to use')
     console.log(jatos.studySessionData["stimuli"].exemplars_used)
 
     // let's preload
