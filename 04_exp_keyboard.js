@@ -54,15 +54,15 @@ jatos.onLoad(function() {
     var theseKeys = jatos.studySessionData["keys"].concat(jatos.studySessionData["keys_other"]);
     var thisPrompt = '<p>';
     for (promptIdx = 0; promptIdx < jatos.studySessionData["keys"].length; promptIdx++) {
-       thisPrompt = thisPrompt+JSON.stringify(jatos.studySessionData["keys"][promptIdx])+': '+JSON.stringify(stimuli.labels[promptIdx]);
+       thisPrompt = thisPrompt+JSON.stringify(jatos.studySessionData["keys"][promptIdx]).toUpperCase()+': '+JSON.stringify(stimuli.labels[promptIdx]);
         if (promptIdx < jatos.studySessionData["keys"].length-1){
             thisPrompt = thisPrompt+'<span style="display: inline-block; margin-left: 40px;"></span>';
         }
     }
     thisPrompt = thisPrompt+'<br><br>';
-    thisPrompt = thisPrompt+JSON.stringify(jatos.studySessionData["keys_other"][0])+': not sure ';
+    thisPrompt = thisPrompt+JSON.stringify(jatos.studySessionData["keys_other"][0]).toUpperCase()+': not sure ';
     thisPrompt = thisPrompt+'<span style="display: inline-block; margin-left: 40px;"></span>';
-    thisPrompt = thisPrompt+JSON.stringify(jatos.studySessionData["keys_other"][1])+': none of these</p>';
+    thisPrompt = thisPrompt+JSON.stringify(jatos.studySessionData["keys_other"][1]).toUpperCase()+': none of these</p>';
 
 
     // now we make an order from stimulus_difficulty.order (if it exists)
@@ -190,7 +190,7 @@ var break_trial = [
             {
                 type: 'image-keyboard-response',
                 choices: [theseKeys[0],theseKeys[1]],
-                prompt: '<p>'+JSON.stringify(theseKeys[0])+': yes '+JSON.stringify(theseKeys[1])+': no</p>',
+                prompt: '<p>'+JSON.stringify(theseKeys[0]).toUpperCase()+': yes '+JSON.stringify(theseKeys[1]).toUpperCase()+': no</p>',
                 margin_vertical: 4,
                 stimulus: 'stimuli/catch-trial.png', // we need to create this
                 stimulus_height: 500,

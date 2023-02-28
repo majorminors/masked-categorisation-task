@@ -22,7 +22,7 @@ jatos.onLoad(function() {
     jatos.studySessionData["catch_trials"]              = 24; // after how many trials should there be catch trials?
     jatos.studySessionData["catch_trial_time"]          = 1500; // how long should we display the catch trial image?
     jatos.studySessionData["catch_trial_feedback_time"] = 1500; // and how long to display feedback afterwards?
-    jatos.studySessionData["maxBadCatchTrials"]         = 10; // how many bad catch trials should there be?
+    jatos.studySessionData["maxBadCatchTrials"]         = 20; // how many bad catch trials should there be?
 
     // prolific stuff
     jatos.studySessionData["prolificURL"] = 'https://app.prolific.co/submissions/complete?cc=';

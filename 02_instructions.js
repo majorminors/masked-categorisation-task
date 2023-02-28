@@ -51,15 +51,15 @@ jatos.onLoad(function() {
         var theseKeys = jatos.studySessionData["keys"].concat(jatos.studySessionData["keys_other"]);
         var thisPrompt = '<p>';
         for (promptIdx = 0; promptIdx < jatos.studySessionData["keys"].length; promptIdx++) {
-           thisPrompt = thisPrompt+JSON.stringify(jatos.studySessionData["keys"][promptIdx])+': '+JSON.stringify(instructionLabels[promptIdx]);
+           thisPrompt = thisPrompt+JSON.stringify(jatos.studySessionData["keys"][promptIdx]).toUpperCase()+': '+JSON.stringify(instructionLabels[promptIdx]);
             if (promptIdx < jatos.studySessionData["keys"].length-1){
                 thisPrompt = thisPrompt+'<span style="display: inline-block; margin-left: 40px;"></span>';
             }
         }
         thisPrompt = thisPrompt+'<br><br>';
-        thisPrompt = thisPrompt+JSON.stringify(jatos.studySessionData["keys_other"][0])+': not sure ';
+        thisPrompt = thisPrompt+JSON.stringify(jatos.studySessionData["keys_other"][0]).toUpperCase()+': not sure ';
         thisPrompt = thisPrompt+'<span style="display: inline-block; margin-left: 40px;"></span>';
-        thisPrompt = thisPrompt+JSON.stringify(jatos.studySessionData["keys_other"][1])+': none of these</p>';
+        thisPrompt = thisPrompt+JSON.stringify(jatos.studySessionData["keys_other"][1]).toUpperCase()+': none of these</p>';
 
 
         // preload paths
@@ -137,7 +137,7 @@ jatos.onLoad(function() {
                 {
                     type: 'image-keyboard-response',
                     choices: [theseKeys[0],theseKeys[1]],
-                    prompt: '<p>'+JSON.stringify(theseKeys[0])+': yes '+JSON.stringify(theseKeys[1])+': no</p>',
+                    prompt: '<p>'+JSON.stringify(theseKeys[0]).toUpperCase()+': yes '+JSON.stringify(theseKeys[1]).toUpperCase()+': no</p>',
                     margin_vertical: 4,
                     stimulus: 'stimuli/catch-trial.png', // we need to create this
                     stimulus_height: 500,
@@ -222,7 +222,7 @@ jatos.onLoad(function() {
                 },
                 {
                     ...instruction_noresp,
-                    stimulus: "<p>The correct answer there was "+JSON.stringify(instructionLabels[0])+" which is key "+JSON.stringify(theseKeys[0])+".<br>Let's do another.</p>"
+                    stimulus: "<p>The correct answer there was "+JSON.stringify(instructionLabels[0])+" which is key "+JSON.stringify(theseKeys[0]).toUpperCase()+".<br>Let's do another.</p>"
                 },
                 instruction_resp,
                 {
@@ -245,7 +245,7 @@ jatos.onLoad(function() {
                 },
                 {
                     ...instruction_noresp,
-                    stimulus: "<p>The correct answer there was "+JSON.stringify(instructionLabels[1])+" which is key "+JSON.stringify(theseKeys[1])+".</p>"
+                    stimulus: "<p>The correct answer there was "+JSON.stringify(instructionLabels[1])+" which is key "+JSON.stringify(theseKeys[1]).toUpperCase()+".</p>"
                 },
                 instruction_resp,
                 {
@@ -268,7 +268,7 @@ jatos.onLoad(function() {
                 },
                 {
                     ...instruction_noresp,
-                    stimulus: "<p>The correct answer there was "+JSON.stringify(instructionLabels[2])+" which is key "+JSON.stringify(theseKeys[2])+".</p>"
+                    stimulus: "<p>The correct answer there was "+JSON.stringify(instructionLabels[2])+" which is key "+JSON.stringify(theseKeys[2]).toUpperCase()+".</p>"
                 },
                 instruction_resp,
                 fixation,
@@ -286,7 +286,7 @@ jatos.onLoad(function() {
                 },
                 {
                     ...instruction_noresp,
-                    stimulus: "<p>The correct answer there was "+JSON.stringify(instructionLabels[2])+" which is key "+JSON.stringify(theseKeys[2])+".</p>"
+                    stimulus: "<p>The correct answer there was "+JSON.stringify(instructionLabels[2])+" which is key "+JSON.stringify(theseKeys[2]).toUpperCase()+".</p>"
                 },
                 instruction_resp,
                 fixation,
@@ -304,7 +304,7 @@ jatos.onLoad(function() {
                 },
                 {
                     ...instruction_noresp,
-                    stimulus: "<p>The correct answer there was "+JSON.stringify(instructionLabels[0])+" which is key "+JSON.stringify(theseKeys[0])+".</p>"
+                    stimulus: "<p>The correct answer there was "+JSON.stringify(instructionLabels[0])+" which is key "+JSON.stringify(theseKeys[0]).toUpperCase()+".</p>"
                 },
                 instruction_resp,
                 fixation,
@@ -322,7 +322,7 @@ jatos.onLoad(function() {
                 },
                 {
                     ...instruction_noresp,
-                    stimulus: "<p>The correct answer there was "+JSON.stringify(instructionLabels[1])+" which is key "+JSON.stringify(theseKeys[1])+".</p>"
+                    stimulus: "<p>The correct answer there was "+JSON.stringify(instructionLabels[1])+" which is key "+JSON.stringify(theseKeys[1]).toUpperCase()+".</p>"
                 },
                 instruction_resp,
                 fixation,
@@ -340,7 +340,7 @@ jatos.onLoad(function() {
                 },
                 {
                     ...instruction_noresp,
-                    stimulus: "<p>The correct answer there was "+JSON.stringify(instructionLabels[3])+" which is key "+JSON.stringify(theseKeys[3])+".</p>"
+                    stimulus: "<p>The correct answer there was "+JSON.stringify(instructionLabels[3])+" which is key "+JSON.stringify(theseKeys[3]).toUpperCase()+".</p>"
                 },
                 instruction_resp,
                 {
@@ -363,7 +363,7 @@ jatos.onLoad(function() {
                 },
                 {
                     ...instruction_noresp,
-                    stimulus: "<p>The correct answer there was "+JSON.stringify(instructionLabels[1])+" which is key "+JSON.stringify(theseKeys[1])+".</p>"
+                    stimulus: "<p>The correct answer there was "+JSON.stringify(instructionLabels[1])+" which is key "+JSON.stringify(theseKeys[1]).toUpperCase()+".</p>"
                 },
                 instruction_resp,
                 fixation,
@@ -381,7 +381,7 @@ jatos.onLoad(function() {
                 },
                 {
                     ...instruction_noresp,
-                    stimulus: "<p>The correct answer there was "+JSON.stringify(instructionLabels[2])+" which is key "+JSON.stringify(theseKeys[2])+".</p>"
+                    stimulus: "<p>The correct answer there was "+JSON.stringify(instructionLabels[2])+" which is key "+JSON.stringify(theseKeys[2]).toUpperCase()+".</p>"
                 },
                 instruction_resp,
                 fixation,
@@ -399,12 +399,12 @@ jatos.onLoad(function() {
                 },
                 {
                     ...instruction_noresp,
-                    stimulus: "<p>The correct answer there was "+JSON.stringify(instructionLabels[1])+" which is key "+JSON.stringify(theseKeys[1])+".</p>"
+                    stimulus: "<p>The correct answer there was "+JSON.stringify(instructionLabels[1])+" which is key "+JSON.stringify(theseKeys[1]).toUpperCase()+".</p>"
                 },
                 instruction_resp,
                 {
                     ...instruction_noresp,
-                    stimulus: "<p>Sometimes you might not know what the answer is. Or sometime you might think that the image doesn't match any of the responses.<br><br>In these cases you can look to the last two keys:"+JSON.stringify(jatos.studySessionData["keys_other"][0])+"and"+JSON.stringify(jatos.studySessionData["keys_other"][1])+"<br>Have a look on the next screen.</p>"
+                    stimulus: "<p>Sometimes you might not know what the answer is. Or sometime you might think that the image doesn't match any of the responses.<br><br>In these cases you can look to the last two keys:"+JSON.stringify(jatos.studySessionData["keys_other"][0]).toUpperCase()+"and"+JSON.stringify(jatos.studySessionData["keys_other"][1]).toUpperCase()+"<br>Have a look on the next screen.</p>"
                 },
                 {
                     ...instruction_resp,
@@ -425,7 +425,7 @@ jatos.onLoad(function() {
                 },
                 {
                     ...instruction_noresp,
-                    stimulus: "<p>None of the category responses were correct there, so you would have selected 'none of these' which is key: "+JSON.stringify(jatos.studySessionData["keys_other"][0])+".</p>"
+                    stimulus: "<p>None of the category responses were correct there, so you would have selected 'none of these' which is key: "+JSON.stringify(jatos.studySessionData["keys_other"][0]).toUpperCase()+".</p>"
                 },
                 instruction_resp,
                 {
