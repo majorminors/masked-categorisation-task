@@ -287,169 +287,182 @@ var break_trial = [
         }
     );
 
-    for (trial = 0; trial < stimuli.category_order.length; trial++) {
-        
-        // insert our catch and break trials if needed
-        if (catch_trials != 0 && trial != 0) {
-            if (trial % catch_trials === 0) {
-                timeline.push(...catch_trial); // we need to spread this, because it has two trials---the catch trial and the feedback trial
+    if (jatos.studysessiondata["experiment_on"] === 1) {
+
+        for (trial = 0; trial < stimuli.category_order.length; trial++) {
+            
+            // insert our catch and break trials if needed
+            if (catch_trials != 0 && trial != 0) {
+                if (trial % catch_trials === 0) {
+                    timeline.push(...catch_trial); // we need to spread this, because it has two trials---the catch trial and the feedback trial
+                }
             }
-        }
-        if (break_trials != 0 && trial != 0) {
-            if (trial % break_trials === 0) {
-                timeline.push(break_trial);
+            if (break_trials != 0 && trial != 0) {
+                if (trial % break_trials === 0) {
+                    timeline.push(break_trial);
+                }
             }
-        }
-        var trialsBeforeFeedback = 24;
-        if (trial != 0) {
-            if (trial % trialsBeforeFeedback === 0) {
-                timeline.push(
-                    {
-                        type: 'html-keyboard-response',
-                        choices: jsPsych.NO_KEYS,
-                        trial_duration: catch_trial_feedback_time,
-                        stimulus: function() {
-                            var lastCorrect = 0;
-                            var lastTrials = jsPsych.data.get().filter({experiment_part: 'response'}).last(trialsBeforeFeedback).values();
-                            for (corrIdx = 0; corrIdx < lastTrials.length; corrIdx++) {
-                               if (lastTrials[corrIdx].correct) {
-                                    lastCorrect++;
-                               }
+            var trialsBeforeFeedback = 24;
+            if (trial != 0) {
+                if (trial % trialsBeforeFeedback === 0) {
+                    timeline.push(
+                        {
+                            type: 'html-keyboard-response',
+                            choices: jsPsych.NO_KEYS,
+                            trial_duration: catch_trial_feedback_time,
+                            stimulus: function() {
+                                var lastCorrect = 0;
+                                var lastTrials = jsPsych.data.get().filter({experiment_part: 'response'}).last(trialsBeforeFeedback).values();
+                                for (corrIdx = 0; corrIdx < lastTrials.length; corrIdx++) {
+                                   if (lastTrials[corrIdx].correct) {
+                                        lastCorrect++;
+                                   }
+                                }
+                                var percentageCorrect = Math.round((lastCorrect/trialsBeforeFeedback)*100);
+                                console.log('last correct: ', lastCorrect)
+                                console.log('percentage correct: ', percentageCorrect)
+                                return '<div style="height: 250px"><p style="font-size: 48px; color: green;">You are averaging '+JSON.stringify(percentageCorrect)+'% correct.</p></div>';
+                            },
+                            data: {experiment_part: 'exp_feedback'}, // we use this information to filter trials
+                            on_finish: function(){
+                                // send the results to jatos in case of failure (will override existing)
+                                var thisSessionData = jatos.studySessionData;
+                                var thisExpData = JSON.parse(jsPsych.data.get().json());
+                                var resultJson = {...thisSessionData, ...thisExpData};
+                                jatos.submitResultData(resultJson)
+                                   .then(() => console.log('data submitted, results saved'));
+                                console.log('results saved');
                             }
-                            var percentageCorrect = Math.round((lastCorrect/trialsBeforeFeedback)*100);
-                            console.log('last correct: ', lastCorrect)
-                            console.log('percentage correct: ', percentageCorrect)
-                            return '<div style="height: 250px"><p style="font-size: 48px; color: green;">You are averaging '+JSON.stringify(percentageCorrect)+'% correct.</p></div>';
-                        },
-                        data: {experiment_part: 'exp_feedback'}, // we use this information to filter trials
-                        on_finish: function(){
-                            // send the results to jatos in case of failure (will override existing)
-                            var thisSessionData = jatos.studySessionData;
-                            var thisExpData = JSON.parse(jsPsych.data.get().json());
-                            var resultJson = {...thisSessionData, ...thisExpData};
-                            jatos.submitResultData(resultJson)
-                               .then(() => console.log('data submitted, results saved'));
-                            console.log('results saved');
                         }
-                    }
+                    );
+                }
+            }
+
+            // now check what kind of experimental trial to insert
+            if (trial < stimulus_difficulty.history && stimulus_difficulty.adaptive != true) {
+                // add enough trials to start checking history for accuracy
+                timeline.push(
+                    {...fixation,
+                        data: {...fixation.data,
+                            trial_num: trial // make an index we can refer to in later trials if we need
+                        }
+                    },
+                    {...stimulus_presentation,
+                        stimulus: function() {
+                            console.log('using default difficulty to establish baseline');
+                            return getStimulus(
+                                jsPsych.data.get().last(1).values()[0].trial_num, // refer to that index we made earlier
+                                stimulus_difficulty.default,
+                                stimuli
+                            );
+                        },
+                    },
+                    {...random_mask,
+                        stimulus: function() {
+                            return getMask(
+                                jsPsych.data.get().last(2).values()[0].trial_num,
+                                stimuli // refer to that index we made earlier 
+                            );
+                        },
+                        on_finish: function(data) {
+                            // code for correctness
+                            var response = jsPsych.data.get().last(1).values()[0].response;
+                            var stimulus_index = jsPsych.data.get().last(3).values()[0].trial_num; // refer to that index we made earlier
+
+                            if (theseKeys.indexOf(response) == stimuli.category_order[stimulus_index]) {
+                                console.log('correct')
+                                data.correct = true;
+                            } else {
+                                console.log('incorrect')
+                                data.correct = false;
+                            }
+
+                            data.response_label = stimuli.labels[theseKeys.indexOf(response)];
+
+                            if (data.response_label === undefined) {
+                                if (response == jatos.studySessionData["keys_other"][1]) {
+                                    console.log('none of these')
+                                    data.response_label = 'none_of_these'
+                                } else if (response == jatos.studySessionData["keys_other"][0]) {
+                                    console.log('not sure')
+                                    data.response_label = 'not_sure'
+                                } else {
+                                    console.log('invalid')
+                                    data.response_label = 'invalid'
+                                }
+                            }
+
+                            data.stimulus_label = stimuli.labels[stimuli.category_order[stimulus_index]];
+                            data.stimulus_variant = stimuli.variant_order[stimulus_index];
+                        }
+                    },
+                );
+            } else {
+                timeline.push(
+                    {...fixation,
+                        data: {...fixation.data,
+                            trial_num: trial
+                        }
+                    },
+                    {...stimulus_presentation,
+                        stimulus: function() {
+                            return getStimulus(
+                                jsPsych.data.get().last(1).values()[0].trial_num, // use the index we specified in fixation
+                                thisDifficulty,
+                                stimuli
+                            );
+                        },
+                    },
+                    {...random_mask,
+                        stimulus: function() {
+                            return getMask(
+                                jsPsych.data.get().last(2).values()[0].trial_num,
+                                stimuli // refer to that index we made earlier
+                            );
+                        },
+                        on_finish: function(data) {
+                            // code for correctness
+                            var response = jsPsych.data.get().last(1).values()[0].response;
+                            var stimulus_index = jsPsych.data.get().last(3).values()[0].trial_num; // refer to that index we made earlier
+
+                            // do response-type specific coding
+                            if (theseKeys.indexOf(response) == stimuli.category_order[stimulus_index]) {
+                                console.log('correct')
+                                data.correct = true;
+                            } else {
+                                console.log('incorrect')
+                                data.correct = false;
+                            }
+                            data.response_label = stimuli.labels[theseKeys.indexOf(response)];
+                            if (data.response_label === undefined) {
+                                data.response_label = 'not sure or none of these'
+                            }
+
+                            data.stimulus_label = stimuli.labels[stimuli.category_order[stimulus_index]];
+                            data.stimulus_variant = stimuli.variant_order[stimulus_index];
+
+                            // adjust difficulty
+                            thisLabel = stimuli.labels[stimuli.category_order[stimulus_index]];
+                            if (stimulus_difficulty.adaptive === false) {
+                                thisDifficulty = stimulus_difficulty.order[stimulus_index];
+                            } else {
+                                thisDifficulty = difficultyTitration(thisDifficulty,thisLabel,stimulus_difficulty);
+                            }
+                        }
+                    },
                 );
             }
         }
 
-        // now check what kind of experimental trial to insert
-        if (trial < stimulus_difficulty.history && stimulus_difficulty.adaptive != true) {
-            // add enough trials to start checking history for accuracy
-            timeline.push(
-                {...fixation,
-                    data: {...fixation.data,
-                        trial_num: trial // make an index we can refer to in later trials if we need
-                    }
-                },
-                {...stimulus_presentation,
-                    stimulus: function() {
-                        console.log('using default difficulty to establish baseline');
-                        return getStimulus(
-                            jsPsych.data.get().last(1).values()[0].trial_num, // refer to that index we made earlier
-                            stimulus_difficulty.default,
-                            stimuli
-                        );
-                    },
-                },
-                {...random_mask,
-                    stimulus: function() {
-                        return getMask(
-                            jsPsych.data.get().last(2).values()[0].trial_num,
-                            stimuli // refer to that index we made earlier 
-                        );
-                    },
-                    on_finish: function(data) {
-                        // code for correctness
-                        var response = jsPsych.data.get().last(1).values()[0].response;
-                        var stimulus_index = jsPsych.data.get().last(3).values()[0].trial_num; // refer to that index we made earlier
-
-                        if (theseKeys.indexOf(response) == stimuli.category_order[stimulus_index]) {
-                            console.log('correct')
-                            data.correct = true;
-                        } else {
-                            console.log('incorrect')
-                            data.correct = false;
-                        }
-
-                        data.response_label = stimuli.labels[theseKeys.indexOf(response)];
-
-                        if (data.response_label === undefined) {
-                            if (response == jatos.studySessionData["keys_other"][1]) {
-                                console.log('none of these')
-                                data.response_label = 'none_of_these'
-                            } else if (response == jatos.studySessionData["keys_other"][0]) {
-                                console.log('not sure')
-                                data.response_label = 'not_sure'
-                            } else {
-                                console.log('invalid')
-                                data.response_label = 'invalid'
-                            }
-                        }
-
-                        data.stimulus_label = stimuli.labels[stimuli.category_order[stimulus_index]];
-                        data.stimulus_variant = stimuli.variant_order[stimulus_index];
-                    }
-                },
-            );
-        } else {
-            timeline.push(
-                {...fixation,
-                    data: {...fixation.data,
-                        trial_num: trial
-                    }
-                },
-                {...stimulus_presentation,
-                    stimulus: function() {
-                        return getStimulus(
-                            jsPsych.data.get().last(1).values()[0].trial_num, // use the index we specified in fixation
-                            thisDifficulty,
-                            stimuli
-                        );
-                    },
-                },
-                {...random_mask,
-                    stimulus: function() {
-                        return getMask(
-                            jsPsych.data.get().last(2).values()[0].trial_num,
-                            stimuli // refer to that index we made earlier
-                        );
-                    },
-                    on_finish: function(data) {
-                        // code for correctness
-                        var response = jsPsych.data.get().last(1).values()[0].response;
-                        var stimulus_index = jsPsych.data.get().last(3).values()[0].trial_num; // refer to that index we made earlier
-
-                        // do response-type specific coding
-                        if (theseKeys.indexOf(response) == stimuli.category_order[stimulus_index]) {
-                            console.log('correct')
-                            data.correct = true;
-                        } else {
-                            console.log('incorrect')
-                            data.correct = false;
-                        }
-                        data.response_label = stimuli.labels[theseKeys.indexOf(response)];
-                        if (data.response_label === undefined) {
-                            data.response_label = 'not sure or none of these'
-                        }
-
-                        data.stimulus_label = stimuli.labels[stimuli.category_order[stimulus_index]];
-                        data.stimulus_variant = stimuli.variant_order[stimulus_index];
-
-                        // adjust difficulty
-                        thisLabel = stimuli.labels[stimuli.category_order[stimulus_index]];
-                        if (stimulus_difficulty.adaptive === false) {
-                            thisDifficulty = stimulus_difficulty.order[stimulus_index];
-                        } else {
-                            thisDifficulty = difficultyTitration(thisDifficulty,thisLabel,stimulus_difficulty);
-                        }
-                    }
-                },
-            );
-        }
+    } else {
+        timeline.push(
+            {
+                type: 'html-keyboard-response',
+                stimulus: '<div><p>skipping experiment</p></div>',
+                choices: jsPsych.NO_KEYS,
+                trial_duration: 300,
+            },
+        );
     }
 
     jsPsych.init({
