@@ -287,7 +287,7 @@ var break_trial = [
         }
     );
 
-    if (jatos.studysessiondata["experiment_on"] === 1) {
+    if (jatos.studySessionData["experiment_on"] === 1) {
 
         for (trial = 0; trial < stimuli.category_order.length; trial++) {
             
