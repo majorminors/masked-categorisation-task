@@ -60,13 +60,6 @@ jatos.onLoad(function() {
 
         var timeline = [];
 
-        timeline.push(
-            {
-                type: 'preload',
-                images: preloadPaths,
-            },
-        );
-
         //////////////////
         /* instructions */
         //////////////////
@@ -452,6 +445,13 @@ jatos.onLoad(function() {
 
     // turn them off if we want
     if (jatos.studySessionData["instructions_on"] == 1) {
+        timeline.push(
+            {
+                type: 'preload',
+                images: preloadPaths,
+            },
+        );
+
         timeline.push(instructions);
     } else {
         timeline.push(

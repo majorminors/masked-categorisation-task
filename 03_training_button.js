@@ -146,13 +146,6 @@ jatos.onLoad(function() {
 
         var timeline = [];
 
-        timeline.push(
-            {
-                type: 'preload',
-                images: jatos.studySessionData["stimuli"].preloadPaths,
-            },
-        );
-
         ///////////////////////////////////////////////
         /* replace stimulus difficulty with training */
         var thisDifficulty = stimulus_difficulty.training;
@@ -191,6 +184,14 @@ jatos.onLoad(function() {
         ////////////////////////////////////////
 
         if (jatos.studySessionData["training_on"] === 1) {
+
+            timeline.push(
+                {
+                    type: 'preload',
+                    images: jatos.studySessionData["stimuli"].preloadPaths,
+                },
+            );
+
 
             for (trial = 0; trial < stimuli.category_order.length; trial++) {
 

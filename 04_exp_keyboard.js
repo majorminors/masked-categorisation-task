@@ -258,13 +258,6 @@ var break_trial = [
 
     var timeline = [];
 
-    timeline.push(
-        {
-            type: 'preload',
-            images: jatos.studySessionData["stimuli"].preloadPaths,
-        },
-    );
-
     var thisDifficulty = stimulus_difficulty.default;
 
     /* commence generating trials */
@@ -288,6 +281,14 @@ var break_trial = [
     );
 
     if (jatos.studySessionData["experiment_on"] === 1) {
+
+        timeline.push(
+            {
+                type: 'preload',
+                images: jatos.studySessionData["stimuli"].preloadPaths,
+            },
+        );
+
 
         for (trial = 0; trial < stimuli.category_order.length; trial++) {
             
