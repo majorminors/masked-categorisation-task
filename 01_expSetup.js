@@ -135,6 +135,8 @@ jatos.onLoad(function() {
         get_consent(timeline); // do the consent function
         get_demographics(timeline); // do the demographics function
     } else {
+        jatos.studySessionData["handedness"] = 'right';
+        console.log("setting default handedness to right");
         timeline.push(
             {
                 type: "html-keyboard-response",
