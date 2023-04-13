@@ -299,6 +299,8 @@ jatos.onLoad(function() {
 
                         data.stimulus_label = stimuli.labels[stimuli.category_order[stimulus_index]];
                         data.stimulus_variant = stimuli.variant_order[stimulus_index];
+                        data.stimulus_exemplar = stimuli.exemplar_order[stimulus_index];
+                        data.stimulus_difficulty = thisDifficulty;
 
                         ////////////////////////////////////////
                         /* adjust our training countertrials */
