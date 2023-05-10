@@ -15,7 +15,7 @@ jatos.onLoad(function() {
     //            cannot respond ------------------------------------------------> can respond --------------------------|
 
     jatos.studySessionData["fixation_time"]             = 200; // ms to display fixation
-    jatos.studySessionData["stimulus_display_time"]     = 150; // ms to display trial
+    jatos.studySessionData["stimulus_display_time"]     = 80; // ms to display trial
     jatos.studySessionData["stimulus_blank_time"]       = 130; // ms to display blank screen after stimulus
     jatos.studySessionData["mask_time"]                 = 180; // ms to display mask (at start of response period)
     jatos.studySessionData["response_time"]             = 2000; // max time for participant response
