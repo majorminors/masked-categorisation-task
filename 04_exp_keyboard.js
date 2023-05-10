@@ -52,7 +52,7 @@ jatos.onLoad(function() {
     if (stimulus_difficulty.adaptive) {
         var trialsRemaining = stimuli.labels.length*stimuli.exemplars_used.length*stimuli.quantity;
     } else {
-        var trialsRemaining = stimuli.labels.length*stimuli.exemplars_used.length*stimuli.quantity*stimulus_difficulty.order.length;
+        var trialsRemaining = stimuli.labels.length*stimuli.exemplars_used.length*stimuli.quantity*stimulus_difficulty.valid.length;
     }
 
     // put together keys and prompt
@@ -79,10 +79,12 @@ jatos.onLoad(function() {
     console.log(JSON.stringify(totalTrialTime)+' mins plus catch trials, breaks and instructions (maybe 20-30 mins)');
 
     // now create anon functions that will select randomly with no repetitions from variants and difficulty
+    var selectVariants = [];
+    var selectDifficulty = [];
     for (exemplarNum=0; exemplarNum < stimuli.exemplars_used.length; exemplarNum++) {
-        var selectVariants[exemplarNum] = randomNoRepeats(Array.from({length: stimuli.quantity}, (_, i) => i + 1)); // quick anon function to grab items randomly with no repeats
+        selectVariants[exemplarNum] = randomNoRepeats(Array.from({length: stimuli.quantity}, (_, i) => i + 1)); // quick anon function to grab items randomly with no repeats
         // this will only be used if not adaptive difficulty
-        var selectDifficulty[exemplarNum] = randomNoRepeats(stimulus_difficulty.valid); // quick anon function to grab items randomly with no repeats
+        selectDifficulty[exemplarNum] = randomNoRepeats(stimulus_difficulty.valid); // quick anon function to grab items randomly with no repeats
     }
 
     // alrighty, let's loop though the trials to work out what our stimulus order will be
@@ -94,10 +96,14 @@ jatos.onLoad(function() {
         var randomVariants = [];
         var randomDifficulty = [];
         for (exemplarNum=0; exemplarNum < stimuli.exemplars_per_block; exemplarNum++) {
+
+            // randomly select one of the exemplars we are using
             randomExemplars[exemplarNum] = stimuli.exemplars_used[Math.floor(Math.random() * stimuli.exemplars_used.length)];
-            randomVariants[exemplarNum] = selectVariants[randomExemplars[exemplarNum]](); // use the anon function to grab a random variant for this randomly selected exemplar
+
+            // using the index for that exemplar (i.e. where it exists in exemplars_used), index into the selector functions (because these were created with exemplars_used)
+            randomVariants[exemplarNum] = selectVariants[stimuli.exemplars_used.indexOf(randomExemplars[exemplarNum])](); // use the anon function to grab a random variant for this randomly selected exemplar
             // only used if not adaptive
-            randomDifficulty[exemplarNum] = selectDifficulty[randomExemplars[exemplarNum]](); // use the anon function to grab a random difficulty for this randomly selected exemplar
+            randomDifficulty[exemplarNum] = selectDifficulty[stimuli.exemplars_used.indexOf(randomExemplars[exemplarNum])](); // use the anon function to grab a random difficulty for this randomly selected exemplar
 
         }
 
