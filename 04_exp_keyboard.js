@@ -34,6 +34,7 @@ jatos.onLoad(function() {
     stimuli.category_order = []; // we'll generate this later
     stimuli.variant_order = []; // generate later
     stimuli.exemplar_order = []; //generate this later
+    stimulus_difficulty.order = []; //generate this later
     stimuli.mask_paths = []; // generate for later
     stimuli.prompt_order = []; // generate this later
     stimuli.prompt_html_array = [];// generate this later
@@ -68,20 +69,6 @@ jatos.onLoad(function() {
     thisPrompt = thisPrompt+'<span style="display: inline-block; margin-left: 40px;"></span>';
     thisPrompt = thisPrompt+JSON.stringify(jatos.studySessionData["keys_other"][1]).toUpperCase()+': none of these</p>';
 
-
-    // now we make an order from stimulus_difficulty.order (if it exists)
-    if (stimulus_difficulty.adaptive === false) {
-        var theseSegments = Math.floor(trialsRemaining/stimulus_difficulty.order.length); // divide the trials evenly into as many segments there are difficulty orders
-        stimulus_difficulty.order = repeatThings(stimulus_difficulty.order,theseSegments);
-        if (stimulus_difficulty.order.length != trialsRemaining) {
-            var makeTheDifference = trialsRemaining-stimulus_difficulty.order.length;
-            console.log('adding ',makeTheDifference,' trials of ',stimulus_difficulty.order[0],' difficulty level to the end');
-            stimulus_difficulty.order.concat(repeatThings(stimulus_difficulty.order[0],makeTheDifference));
-            // this is not rigorously tested
-        }
-        console.log('stimulus difficulty order generated: ',stimulus_difficulty.order);
-    }
-
     // so how many trials do we have now?
     console.log('total trials');
     console.log(trialsRemaining);
@@ -90,6 +77,14 @@ jatos.onLoad(function() {
     totalTrialTime = totalTrialTime/1000; // how many s
     totalTrialTime = totalTrialTime/60; // how many mins
     console.log(JSON.stringify(totalTrialTime)+' mins plus catch trials, breaks and instructions (maybe 20-30 mins)');
+
+    // now create anon functions that will select randomly with no repetitions from variants and difficulty
+    for (exemplarNum=0; exemplarNum < stimuli.exemplars_used.length; exemplarNum++) {
+        var selectVariants[exemplarNum] = randomNoRepeats(Array.from({length: stimuli.quantity}, (_, i) => i + 1)); // quick anon function to grab items randomly with no repeats
+        // this will only be used if not adaptive difficulty
+        var selectDifficulty[exemplarNum] = randomNoRepeats(stimulus_difficulty.valid); // quick anon function to grab items randomly with no repeats
+    }
+
     // alrighty, let's loop though the trials to work out what our stimulus order will be
     while (trialsRemaining > 0) {
 
@@ -97,9 +92,13 @@ jatos.onLoad(function() {
         // so if we have 2 exemplars per block, we'll randomly select e.g. 2 of the 16 cars, and of those two, we'll select two bubble variants---one for each
         var randomExemplars = [];
         var randomVariants = [];
+        var randomDifficulty = [];
         for (exemplarNum=0; exemplarNum < stimuli.exemplars_per_block; exemplarNum++) {
             randomExemplars[exemplarNum] = stimuli.exemplars_used[Math.floor(Math.random() * stimuli.exemplars_used.length)];
-            randomVariants[exemplarNum] = randomNumberFrom(1,stimuli.quantity);
+            randomVariants[exemplarNum] = selectVariants[randomExemplars[exemplarNum]](); // use the anon function to grab a random variant for this randomly selected exemplar
+            // only used if not adaptive
+            randomDifficulty[exemplarNum] = selectDifficulty[randomExemplars[exemplarNum]](); // use the anon function to grab a random difficulty for this randomly selected exemplar
+
         }
 
         // now we loop through labels/categories and map these random stimuli to each label
@@ -107,33 +106,37 @@ jatos.onLoad(function() {
         var tmpExemplars = [];
         var tmpStimuli = [];
         var tmpVariants = [];
+        var tmpDifficulties = [];
         for (stimNum=0; stimNum < stimuli.labels.length; stimNum++) {
 
             // concatenate our randomExemplars for each stimulus category
             tmpExemplars = tmpExemplars.concat(randomExemplars);
+            // and concat our variants
+            tmpVariants = tmpVariants.concat(randomVariants);
+            // and our difficulties (only used if not adaptive)
+            tmpDifficulties = tmpDifficulties.concat(randomDifficulty);
 
             // get an equivalent array so we know what stimuli these exemplars belong to
             tmpStimuli = tmpStimuli.concat(Array(stimuli.exemplars_per_block).fill(stimNum));
 
-            // and concat our variants
-            tmpVariants = tmpVariants.concat(randomVariants);
-
             // now we iterate our trials remaining
             trialsRemaining = trialsRemaining-(1*stimuli.exemplars_per_block);
         }
-        // by the end of this, we'll have three variables:
+        // by the end of this, we'll have four variables:
         //  tmpExemplars: trial by trial, what exemplar should we show?
         //  tmpStimuli: trial by trial, what category will the exemplar be from? this is an index for the label, not the label itself
         //  tmpVariants: trial by trial, what bubble variant for the exemplar should we show?
+        //  tmpDifficulties: trial by trial, what difficulty should this be shown at?
 
         // now we have a nice order, but we want to shuffle them all up, so that we don't have one category after another
         // this will shuffle all three of our variables in the exact same way
-        shuffle(tmpStimuli,tmpExemplars,tmpVariants);
+        shuffle(tmpStimuli,tmpExemplars,tmpVariants,tmpDifficulties);
 
         // now we put that shuffled order into the variable we'll use later to create our trials
         stimuli.category_order = stimuli.category_order.concat(tmpStimuli);
         stimuli.exemplar_order = stimuli.exemplar_order.concat(tmpExemplars);
         stimuli.variant_order = stimuli.variant_order.concat(tmpVariants);
+        stimulus_difficulty.order = stimulus_difficulty.order.concat(tmpDifficulties);
     }
 
 

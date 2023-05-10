@@ -37,15 +37,15 @@ jatos.onLoad(function() {
 // keys moved to start of instructions script, since it needs to read in from demographics
 
     jatos.studySessionData["stimulus_difficulty"] = {
-        valid: [1,2,3,4,5], // valid stimulus difficulties, should correspond to folder names
+        valid: [1,2,4,5], // valid stimulus difficulties, should correspond to folder names
         default: 2, // default stim difficulty (used for first trials to establish accuracy)
         training: 5, // what stim difficulty to use during training
         min: 1, // min stimulus difficulty (to limit titration from going too far down)
         max: 5, // max stimulus difficulty (to limit titration from going too far up)
         accuracy: 50, // percentage difficulty to titrate to
         history: 4, // number of trials to check accuracy over
+        // ADAPTIVE IS BROKEN: expects to just go up and down to min and max by 1: need to fix difficultyTitration function in helperFunctions.js to index into stimulus_difficulty.valid
         adaptive: false, // true (will titrate difficulty to `accuracy`) | false (will set difficulty to `order`)
-        order: [1,2,4,5], // will repmat whatever values you put in here if stimulus_difficulty.adaptive is true, and if the result doesn't evenly fit the amount of trials, it will add however many trials are left of the 0th element (so e.g. if [1,2,3], will repmat [1,2,3,1,2,3...] and if the result doesn't fit the number of trials, it will finish up by adding as many 1s as it needs [...1,2,3,1,1]. You can repmat here with `repeatThings(array,repetitions)`.
     };
 
     jatos.studySessionData["stimuli"] = {
