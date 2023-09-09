@@ -5,6 +5,7 @@ jatos.onLoad(function() {
 // alter the exemplars and exemplars per block and the number of variants (stimuli.quantity)
 
     console.log("initial set up");
+    console.log("version 3");
     
     //////////////
     /* settings */

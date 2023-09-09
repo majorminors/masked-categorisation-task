@@ -144,6 +144,81 @@ jatos.onLoad(function() {
         stimuli.variant_order = stimuli.variant_order.concat(tmpVariants);
         stimulus_difficulty.order = stimulus_difficulty.order.concat(tmpDifficulties);
     }
+    console.log("exemplar order is: ")
+    console.log(stimuli.exemplar_order)
+
+// Let's check the quantities
+var exemplarDifficulties = {};
+var exemplarVariants = {};
+
+// Initialize counters for total variants and difficulties in the experiment
+var totalVariants = {};
+var totalDifficulties = {};
+
+for (var i = 0; i < stimuli.category_order.length; i++) {
+  var category = stimuli.category_order[i];
+  var exemplar = stimuli.exemplar_order[i];
+  var difficulty = stimulus_difficulty.order[i];
+  var variant = stimuli.variant_order[i];
+
+  // Count the number of each difficulty for each exemplar
+  if (!exemplarDifficulties[category]) {
+    exemplarDifficulties[category] = {};
+  }
+  if (!exemplarDifficulties[category][exemplar]) {
+    exemplarDifficulties[category][exemplar] = {};
+  }
+  if (!exemplarDifficulties[category][exemplar][difficulty]) {
+    exemplarDifficulties[category][exemplar][difficulty] = 0;
+  }
+  exemplarDifficulties[category][exemplar][difficulty]++;
+
+  // Count the number of each variant for each exemplar
+  if (!exemplarVariants[category]) {
+    exemplarVariants[category] = {};
+  }
+  if (!exemplarVariants[category][exemplar]) {
+    exemplarVariants[category][exemplar] = {};
+  }
+  if (!exemplarVariants[category][exemplar][variant]) {
+    exemplarVariants[category][exemplar][variant] = 0;
+  }
+  exemplarVariants[category][exemplar][variant]++;
+
+  // Count the total number of variants for each category
+  if (!totalVariants[category]) {
+    totalVariants[category] = 0;
+  }
+  totalVariants[category]++;
+
+  // Count the total number of difficulties for each category
+  if (!totalDifficulties[category]) {
+    totalDifficulties[category] = 0;
+  }
+  totalDifficulties[category]++;
+}
+
+// Check if the number of variants and difficulties are equal for each category*exemplar
+var isVariantsEqual = true;
+var isDifficultiesEqual = true;
+
+for (var category in exemplarDifficulties) {
+  for (var exemplar in exemplarDifficulties[category]) {
+    for (var difficulty in exemplarDifficulties[category][exemplar]) {
+      if (exemplarVariants[category][exemplar] && exemplarVariants[category][exemplar][variant] !== totalVariants[category]) {
+        isVariantsEqual = false;
+      }
+      if (exemplarDifficulties[category][exemplar][difficulty] !== totalDifficulties[category]) {
+        isDifficultiesEqual = false;
+      }
+    }
+  }
+}
+
+console.log("Equal numbers of variants per category*exemplar: " + isVariantsEqual);
+console.log("Equal difficulties per category*exemplar: " + isDifficultiesEqual);
+console.log("Variant counts:\n", exemplarVariants);
+console.log("Difficulty counts:\n", exemplarDifficulties);
 
 
     ////////////////////////////
