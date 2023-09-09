@@ -349,7 +349,7 @@ var break_trial = [
             }
 
             // now check what kind of experimental trial to insert
-            if (trial < stimulus_difficulty.history && stimulus_difficulty.adaptive != true) {
+            if (trial < stimulus_difficulty.history && stimulus_difficulty.adaptive === true) {
                 // add enough trials to start checking history for accuracy
                 timeline.push(
                     {...fixation,
